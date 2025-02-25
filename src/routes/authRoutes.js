@@ -12,7 +12,7 @@ router.get('/google',
 router.get('/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
-        res.redirect("http://localhost:5174/workspace.html"); // ✅ Redirect to frontend after login
+        res.redirect("https://progresstify.vercel.app/"); // ✅ Redirect to frontend after login
     }
 );
 
