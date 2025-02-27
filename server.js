@@ -30,9 +30,9 @@ app.use(session({
         tableName: 'session', // Default session table name
         createTableIfMissing: true
     }),
-    secret: process.env.SESSION_SECRET || 'supersecret',
-    resave: false,
-    saveUninitialized: false,
+    secret: process.env.SESSION_SECRET || "secret",
+    resave: true, // 🔧 TEMP FIX: Ensures session is saved
+    saveUninitialized: true, // 🔧 TEMP FIX: Ensures empty sessions are saved
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', // Only secure in production
