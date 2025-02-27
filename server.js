@@ -26,7 +26,7 @@ app.get("/api/data", ensureAuthenticated, (req, res) => {
   res.json({ message: `Hello, ${req.user.name}!` });
 });
 
-app.get("/api/user", (req, res) => {
+app.get("/api/users", (req, res) => {
   res.json({ message: "User data here" });
 });
 
