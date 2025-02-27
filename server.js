@@ -5,7 +5,7 @@ const passport = require('./src/config/auth');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const cors = require("cors"); // ✅ Import cors
-const ensureAuthenticated = require('./src/middleware/ensureAuthenticated');
+const ensureAuthenticated = require('./src/middleware/authMiddleware');
 
 
 require('dotenv').config();
@@ -25,6 +25,11 @@ app.use(cors({ origin: "https://progresstify.vercel.app/", credentials: true }))
 app.get("/api/data", ensureAuthenticated, (req, res) => {
   res.json({ message: `Hello, ${req.user.name}!` });
 });
+
+app.get("/api/user", (req, res) => {
+  res.json({ message: "User data here" });
+});
+
 
 
 // Routes
