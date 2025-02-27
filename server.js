@@ -8,6 +8,7 @@ const pgSession = require('connect-pg-simple')(session);
 const cors = require("cors");
 const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const pool = require("./src/config/db");
+const logger = require("./src/utils/logger");  // Import the logger
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -100,6 +101,13 @@ app.get('/auth/google/callback',
         res.redirect('/');
     }
 );
+
+app.use((req, res, next) => {
+    logger.debug(`🌍 Incoming request: ${req.method} ${req.url}`);
+    logger.debug(`📌 Session Data: ${JSON.stringify(req.session, null, 2)}`);
+    logger.debug(`📌 User: ${JSON.stringify(req.user)}`);
+    next();
+});
 
 // ✅ Start Server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
