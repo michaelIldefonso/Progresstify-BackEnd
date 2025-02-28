@@ -12,4 +12,5 @@ async function createUser(name, email) {
     );
     return result.rows[0];
 }
+
 module.exports = {getUserByEmail, createUser};

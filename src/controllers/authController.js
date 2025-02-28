@@ -6,16 +6,16 @@ const authController = {
     googleLogin: passport.authenticate("google", { scope: ["profile", "email"] }),
 
     googleCallback: passport.authenticate("google", {
-        failureRedirect: `${CLIENT_URL}/login`, // Redirect dynamically
+        failureRedirect: "/login", // Redirect dynamically
     }),
     
     googleCallbackSuccess: (req, res) => {
-        res.redirect(`${CLIENT_URL}/home`); // Redirect to frontend dashboard
+        res.redirect("/dashboard"); // Redirect to dashboard view
     },
 
     logout: (req, res) => {
         req.logout(() => {
-            res.redirect(CLIENT_URL); // Redirect to frontend home after logout
+            res.redirect("/"); // Redirect to home after logout
         });
     }
 };

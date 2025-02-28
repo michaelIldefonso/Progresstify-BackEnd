@@ -19,7 +19,7 @@ router.get("/user", async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res.json(result.rows[0]); // ✅ Return full user details
+        res.json(result.rows[0]); // Return full user details
     } catch (err) {
         console.error("Error fetching user:", err);
         res.status(500).json({ error: err.message });

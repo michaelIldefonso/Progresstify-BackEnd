@@ -1,6 +1,7 @@
 require('dotenv').config();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const jwt = require('jsonwebtoken');
 const pool = require('./db');
 
 console.log("Client ID:", process.env.GOOGLE_CLIENT_ID);
@@ -46,6 +47,9 @@ passport.use(new GoogleStrategy({
         }
 
         console.log("User authenticated:", user);
+        user.generateJwt = () => {
+            return jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        };
         return done(null, user);
     } catch (err) {
         return done(err, null);
@@ -53,31 +57,14 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
-    console.log("Serializing User:", user);
-    if (!user || !user.id) {
-        console.error("❌ No user or user ID during serialization.");
-    }
     done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
-    console.log("🔄 Attempting to deserialize user with ID:", id);
-    
-    if (!id) {
-        console.error("❌ Missing user ID in session. Authentication may not be working.");
-        return done(null, false);
-    }
-
     try {
         const user = await getUserFromDB(id);
-        if (!user) {
-            console.error("❌ No user found for ID:", id);
-            return done(null, false);
-        }
-        console.log("✅ Deserialized User:", user);
         done(null, user);
     } catch (err) {
-        console.error("❌ Error in deserializeUser:", err);
         done(err, null);
     }
 });

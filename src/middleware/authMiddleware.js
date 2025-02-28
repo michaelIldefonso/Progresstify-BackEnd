@@ -1,10 +1,20 @@
+const jwt = require('jsonwebtoken');
+
 const ensureAuthenticated = (req, res, next) => {
-    console.log("Session Data:", JSON.stringify(req.session, null, 2)); // Pretty-print session
-    console.log("User:", req.user);
+    const token = req.headers.authorization?.split(' ')[1];
     
-    if (req.isAuthenticated()) {
-        return next();
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
     }
-    res.status(401).json({ error: "Unauthorized" });
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        req.user = decoded;
+        next();
+    });
 };
+
 module.exports = ensureAuthenticated;

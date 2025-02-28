@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Link to your CSS file -->
 </head>
 <body>
     <h1>Dashboard</h1>
@@ -13,7 +10,7 @@
         <p>Email: <%= user.email %></p>
         <a href="/logout">Logout</a>
     <% } else { %>
-        <p>You are not logged in. <a href="/login">Log in here</a>.</p>
+        <p>User not found</p>
     <% } %>
 </body>
 </html>
