@@ -13,9 +13,10 @@ router.get("/google",
 
 // ✅ Google OAuth Callback Route
 router.get("/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect(`${CLIENT_URL}/home`); // ✅ Redirect dynamically based on environment
+    console.log("User after login:", req.user); // Debug log
+    res.redirect(`/dashboard?user=${JSON.stringify(req.user)}`);
   }
 );
 

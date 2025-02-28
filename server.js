@@ -8,21 +8,27 @@ const pgSession = require('connect-pg-simple')(session);
 const cors = require("cors");
 const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const pool = require("./src/config/db");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Automatically set frontend URL (from `.env`)
+// Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
-// ✅ CORS Middleware (Allows requests from frontend)
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
+
+// CORS Middleware (Allows requests from frontend)
 app.use(
   cors({
     origin: CLIENT_URL,
     credentials: true
-}));
+  })
+);
 
-// ✅ Session Middleware (Persists user session)
+// Session Middleware (Persists user session)
 app.use(session({
     store: new pgSession({
         pool, // Use PostgreSQL pool
@@ -41,23 +47,27 @@ app.use(session({
     }
 }));
 
-// ✅ Passport Middleware
+// Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Debugging: Check if user is authenticated
+// Debugging: Check if user is authenticated
 app.use((req, res, next) => {
     console.log("Session Data:", req.session);
     console.log("User:", req.user);
     next();
 });
 
-// ✅ Authentication & User Routes
+// Authentication & User Routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 
-// ✅ Protected API Route (Only accessible if authenticated)
-app.get("/api/data", (req, res) => {
+app.get("/", (req, res) => {
+    res.render("index", { user: req.user }); // Render the index.ejs file
+});
+
+// Protected API Route (Only accessible if authenticated)
+app.get("/api/data", ensureAuthenticated, (req, res) => {
   console.log("Session Data:", req.session);
   console.log("User:", req.user); // Should NOT be undefined
   if (!req.user) {
@@ -66,7 +76,7 @@ app.get("/api/data", (req, res) => {
   res.json({ message: `Hello, ${req.user.name}!` });
 });
 
-// ✅ Fetch User Data
+// Fetch User Data
 app.get("/api/users", ensureAuthenticated, async (req, res) => {
     try {
         const result = await pool.query(
@@ -78,28 +88,39 @@ app.get("/api/users", ensureAuthenticated, async (req, res) => {
             return res.status(404).json({ error: "User not found" });
         }
 
-        res.json(result.rows[0]); // ✅ Send user data
+        res.json(result.rows[0]); // Send user data
     } catch (err) {
         console.error("Error fetching user:", err);
         res.status(500).json({ error: err.message });
     }
 });
 
-// ✅ Debugging: Check session data
+// Debugging: Check session data
 app.get('/debug-session', (req, res) => {
     console.log("🔍 Session Data:", req.session);
     console.log("👤 req.user:", req.user);
     res.json({ session: req.session, user: req.user });
 });
 
-// ✅ Google OAuth callback
+// Google OAuth callback
 app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     (req, res) => {
         console.log("✅ Login Success! Redirecting...");
-        res.redirect('/');
+        res.redirect('/dashboard');
     }
 );
 
-// ✅ Start Server
+app.get("/login", (req, res) => {
+    res.render("login"); // Render the login.ejs file
+});
+
+app.get("/dashboard", ensureAuthenticated, (req, res) => {
+    if (!req.user) {
+        return res.redirect("/login"); // Redirect to login if not authenticated
+    }
+    res.render("dashboard", { user: req.user }); // Render the dashboard.ejs file
+});
+
+// Start Server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
