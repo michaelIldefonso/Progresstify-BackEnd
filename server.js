@@ -19,6 +19,19 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+// Session Middleware (if needed for other purposes)
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'supersecret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        sameSite: "none", // Required for cross-origin cookies
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    }
+}));
+
 // CORS Middleware (Allows requests from frontend)
 app.use(
   cors({
@@ -40,24 +53,20 @@ app.get("/", (req, res) => {
 
 // Protected API Route (Only accessible if authenticated)
 app.get("/api/data", ensureAuthenticated, (req, res) => {
-  res.json({ message: `Hello, ${req.user.name}!` });
+    console.log("Authenticated User:", req.user); // Log the authenticated user
+    res.json({ message: `Hello, ${req.user.name}!` });
 });
 
-// Fetch User Data
-app.get("/api/users", ensureAuthenticated, async (req, res) => {
+// Fetch All Users Data
+app.get("/api/all-users", ensureAuthenticated, async (req, res) => {
     try {
         const result = await pool.query(
-            "SELECT id, name, email, role_id FROM users WHERE email = $1",
-            [req.user.email]
+            "SELECT id, name, email, role_id FROM users"
         );
 
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        res.json(result.rows[0]); // Send user data
+        res.json(result.rows); // Send all user data
     } catch (err) {
-        console.error("Error fetching user:", err);
+        console.error("Error fetching users:", err);
         res.status(500).json({ error: err.message });
     }
 });
@@ -66,10 +75,16 @@ app.get("/api/users", ensureAuthenticated, async (req, res) => {
 app.get('/auth/google/callback',
     passport.authenticate('google', { session: false, failureRedirect: '/login' }),
     (req, res) => {
-        console.log("✅ Login Success! Redirecting...");
-        // Generate JWT token
-        const token = req.user.generateJwt();
-        res.redirect(`/dashboard?token=${token}`);
+        try {
+            console.log("✅ Login Success! Redirecting...");
+            // Generate JWT token
+            const token = req.user.generateJwt();
+            console.log("Generated Token:", token); // Log the generated token
+            res.redirect(`${CLIENT_URL}/dashboard?token=${token}`);
+        } catch (err) {
+            console.error("Error during Google OAuth callback:", err);
+            res.status(500).send("Internal Server Error");
+        }
     }
 );
 
@@ -79,11 +94,25 @@ app.get("/login", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     const token = req.query.token;
+    console.log("Dashboard Token:", token); // Log the token
+
     if (!token) {
         return res.redirect("/login"); // Redirect to login if no token is provided
     }
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-    res.render("dashboard", { user }); // Render the dashboard.ejs file with user data
+
+    try {
+        const user = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Verified User:", user); // Log the verified user
+        res.render("dashboard", { user }); // Render the dashboard.ejs file with user data
+    } catch (err) {
+        console.error("JWT Verification Error:", err); // Log the verification error
+        res.redirect("/login");
+    }
+});
+
+// Serve the dashboard HTML file
+app.get("/static-dashboard", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "dashboard.html"));
 });
 
 // Start Server
