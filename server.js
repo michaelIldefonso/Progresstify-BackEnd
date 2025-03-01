@@ -7,6 +7,7 @@ const cors = require("cors");
 const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const session = require("express-session");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,9 +15,24 @@ const PORT = process.env.PORT || 5000;
 // Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
+// Set up the view engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+// Session Middleware (if needed for other purposes)
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'supersecret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Only secure in production
+        sameSite: "none", // Required for cross-origin cookies
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    }
+}));
 
 // CORS Middleware (Allows requests from frontend)
 app.use(
@@ -96,9 +112,16 @@ app.get("/dashboard", (req, res) => {
     }
 });
 
-// Serve the dashboard HTML file
+// Serve the Vite frontend
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
+});
+
+// Serve the static dashboard HTML file
 app.get("/static-dashboard", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+    res.sendFile(path.join(__dirname, "frontend", "dist", "dashboard.html"));
 });
 
 // Start Server
