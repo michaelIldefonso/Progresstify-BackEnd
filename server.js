@@ -11,11 +11,9 @@ const jwt = require("jsonwebtoken");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Automatically set frontend URL (from `.env`)
+// Automatically set frontend URL and API base URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
@@ -35,7 +33,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 
 app.get("/", (req, res) => {
-    res.render("index"); // Render the index.ejs file
+    res.send("Welcome to the API"); // Simple welcome message
 });
 
 // Protected API Route (Only accessible if authenticated)
@@ -76,7 +74,7 @@ app.get('/auth/google/callback',
 );
 
 app.get("/login", (req, res) => {
-    res.render("login"); // Render the login.ejs file
+    res.send("Please log in"); // Simple login message
 });
 
 app.get("/dashboard", (req, res) => {
@@ -90,23 +88,11 @@ app.get("/dashboard", (req, res) => {
     try {
         const user = jwt.verify(token, process.env.JWT_SECRET);
         console.log("Verified User:", user); // Log the verified user
-        res.render("dashboard", { user }); // Render the dashboard.ejs file with user data
+        res.send(`Welcome to the dashboard, ${user.name}`); // Simple dashboard message with user data
     } catch (err) {
         console.error("JWT Verification Error:", err); // Log the verification error
         res.redirect("/login");
     }
-});
-
-// Serve the Vite frontend
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
-});
-
-// Serve the static dashboard HTML file
-app.get("/static-dashboard", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend", "dist", "dashboard.html"));
 });
 
 // Start Server

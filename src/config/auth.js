@@ -52,6 +52,7 @@ passport.use(new GoogleStrategy({
         };
         return done(null, user);
     } catch (err) {
+        console.error("Error in GoogleStrategy callback:", err);
         return done(err, null);
     }
 }));
@@ -65,6 +66,7 @@ passport.deserializeUser(async (id, done) => {
         const user = await getUserFromDB(id);
         done(null, user);
     } catch (err) {
+        console.error("Error in deserializeUser:", err);
         done(err, null);
     }
 });
