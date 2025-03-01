@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Automatically set frontend URL and API base URL (from `.env`)
+// Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
 app.use(express.static(path.join(__dirname, "public")));
