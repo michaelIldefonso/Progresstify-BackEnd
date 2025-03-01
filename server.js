@@ -14,12 +14,10 @@ const PORT = process.env.PORT || 5000;
 // Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
-
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
-
-// Session Middleware (if needed for other purposes)
-
 
 // CORS Middleware (Allows requests from frontend)
 app.use(
