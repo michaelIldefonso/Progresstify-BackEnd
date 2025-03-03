@@ -1,14 +1,15 @@
 const express = require("express");
-const router = express.Router();
-const pool = require("../config/db");
 const ensureAuthenticated = require("../middleware/authMiddleware");
 
-router.get("/", ensureAuthenticated, async (req, res) => {
+const router = express.Router();
+
+router.get("/me", ensureAuthenticated, async (req, res) => {
     try {
-        const result = await pool.query("SELECT id, email FROM users");
-        res.json(result.rows);
-    } catch (error) {
-        res.status(500).json({ error: "Failed to fetch users" });
+        const user = req.user;
+        res.json({ id: user.id, email: user.email });
+    } catch (err) {
+        console.error("Error fetching user:", err);
+        res.status(500).json({ error: err.message });
     }
 });
 

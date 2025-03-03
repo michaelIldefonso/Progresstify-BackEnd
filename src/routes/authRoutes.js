@@ -11,7 +11,7 @@ router.get(
     (req, res) => {
         try {
             const token = req.user.generateJwt();
-            res.json({ token });
+            res.redirect(`${process.env.CLIENT_URL}/dashboard?token=${token}`);
         } catch (err) {
             console.error("OAuth Error:", err);
             res.status(500).json({ error: "Internal Server Error" });

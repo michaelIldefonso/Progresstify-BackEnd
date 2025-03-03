@@ -31,25 +31,13 @@ passport.use(new GoogleStrategy({
         const { email, name } = profile._json;
         const oauthProvider = 'google';  // Store provider dynamically
 
-        // Check if user exists
-        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-
-        let user;
-        if (result.rows.length > 0) {
-            user = result.rows[0]; // Existing user
-        } else {
-            // Insert new user into database
-            const insert = await pool.query(
-                'INSERT INTO users (name, email, oauth_provider, oauth_id) VALUES ($1, $2, $3, $4) RETURNING *',
-                [name, email, oauthProvider, profile.id] // Pass profile.id as oauth_id
-            );
-            user = insert.rows[0];
-        }
+        // Simplified user creation/retrieval logic
+        const user = { id: profile.id, email: profile.emails[0].value };
+        user.generateJwt = function () {
+            return jwt.sign({ id: this.id, email: this.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        };
 
         console.log("User authenticated:", user);
-        user.generateJwt = () => {
-            return jwt.sign({ id: user.id, email: user.email, name: user.name }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        };
         return done(null, user);
     } catch (err) {
         console.error("Error in GoogleStrategy callback:", err);
@@ -58,15 +46,18 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
+    console.log("Serializing User:", user);
     done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
+    console.log("🔄 Deserializing User ID:", id); // Should always log
     try {
-        const user = await getUserFromDB(id);
+        const user = await getUserFromDB(id); // Fetch from DB
+        console.log("✅ User found:", user);
         done(null, user);
     } catch (err) {
-        console.error("Error in deserializeUser:", err);
+        console.error("❌ Error in deserializeUser:", err);
         done(err, null);
     }
 });

@@ -36,17 +36,5 @@ app.get("/", (req, res) => {
     res.send("Welcome to the API");
 });
 
-// Fetch all users for Dashboard
-app.get("/api/users", ensureAuthenticated, async (req, res) => {
-    try {
-        const result = await pool.query(
-            "SELECT id, email FROM users" // Fetch users without sensitive data
-        );
-        res.json(result.rows);
-    } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
