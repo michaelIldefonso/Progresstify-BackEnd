@@ -18,6 +18,8 @@ const CLIENT_URL = process.env.CLIENT_URL;
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+
+
 app.use(
     cors({
       origin: CLIENT_URL,
@@ -67,14 +69,13 @@ app.get("/api/users", ensureAuthenticated, async (req, res) => {
 });
 
 app.get('/api/data', ensureAuthenticated, (req, res) => {
-  // Example data to be sent in response
-  const data = {
+  res.json({
     message: 'This is some data from the API',
     userId: req.user.id,
     userEmail: req.user.email,
-  };
-  res.json(data);
+    userName: req.user.name,
+    userOauth_id: req.user.oauth_id
+  });
 });
-
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

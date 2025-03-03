@@ -34,7 +34,7 @@ passport.use(new GoogleStrategy({
         // Simplified user creation/retrieval logic
         const user = { id: profile.id, email: profile.emails[0].value };
         user.generateJwt = function () {
-            return jwt.sign({ id: this.id, email: this.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+            return jwt.sign({ id: this.id, email: this.email, oauth_id: this.oauth_id, name: this.email}, process.env.JWT_SECRET, { expiresIn: "1h" });
         };
 
         console.log("User authenticated:", user);
