@@ -36,5 +36,45 @@ app.get("/", (req, res) => {
     res.send("Welcome to the API");
 });
 
+// Admin check middleware
+// const ensureAdmin = async (req, res, next) => {
+//   if (req.user) {
+//     try {
+//       const roleResult = await pool.query('SELECT name FROM roles WHERE id = $1', [req.user.role_id]);
+//       if (roleResult.rows.length > 0 && roleResult.rows[0].name === 'admin') {
+//         next();
+//       } else {
+//         res.status(403).json({ error: 'Forbidden' });
+//       }
+//     } catch (err) {
+//       res.status(500).json({ error: err.message });
+//     }
+//   } else {
+//     res.status(403).json({ error: 'Forbidden' });
+//   }
+// };
+
+app.get("/api/users", ensureAuthenticated, async (req, res) => {
+  try {
+      const result = await pool.query(
+          "SELECT id, email FROM users" // Fetch users without sensitive data
+      );
+      res.json(result.rows);
+  } catch (err) {
+      console.error("Error fetching users:", err);
+      res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/data', ensureAuthenticated, (req, res) => {
+  // Example data to be sent in response
+  const data = {
+    message: 'This is some data from the API',
+    userId: req.user.id,
+    userEmail: req.user.email,
+  };
+  res.json(data);
+});
+
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
