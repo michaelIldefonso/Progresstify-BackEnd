@@ -39,7 +39,7 @@ app.use(passport.initialize());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/api/workspaces", workspaceRoutes);
-app.use("/api/boards", boardRoutes);
+app.use("/api/workspaces/:workspaceId/boards", boardRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
