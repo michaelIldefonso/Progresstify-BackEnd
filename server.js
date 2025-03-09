@@ -8,15 +8,20 @@ const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const pool = require("./src/config/db"); // Import database connection
+const workspaceRoutes = require("./src/routes/workspaceRoutes");
+const boardRoutes = require("./src/routes/boardRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+
 
 // Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
+
 
 
 
@@ -33,28 +38,12 @@ app.use(passport.initialize());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/api/workspaces", workspaceRoutes);
+app.use("/api/boards", boardRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
 });
-
-// Admin check middleware
-// const ensureAdmin = async (req, res, next) => {
-//   if (req.user) {
-//     try {
-//       const roleResult = await pool.query('SELECT name FROM roles WHERE id = $1', [req.user.role_id]);
-//       if (roleResult.rows.length > 0 && roleResult.rows[0].name === 'admin') {
-//         next();
-//       } else {
-//         res.status(403).json({ error: 'Forbidden' });
-//       }
-//     } catch (err) {
-//       res.status(500).json({ error: err.message });
-//     }
-//   } else {
-//     res.status(403).json({ error: 'Forbidden' });
-//   }
-// };
 
 app.get("/api/users", ensureAuthenticated, async (req, res) => {
   try {
@@ -77,5 +66,7 @@ app.get('/api/data', ensureAuthenticated, (req, res) => {
     userOauth_id: req.user.oauth_id
   });
 });
+
+
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
