@@ -5,7 +5,7 @@ const ensureAuthenticated = require("../middleware/authMiddleware");
 const router = express.Router({ mergeParams: true }); // Enable access to workspaceId from parent route
 
 // Get boards in a workspace
-router.get("/:workspaceId/boards", async (req, res) => {
+router.get("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
   const { workspaceId } = req.params; // Get workspaceId from URL
   try {
     const result = await pool.query("SELECT * FROM boards WHERE workspace_id = $1", [workspaceId]);
@@ -16,7 +16,7 @@ router.get("/:workspaceId/boards", async (req, res) => {
 });
 
 // Create a new board
-router.post("/:workspaceId/boards", async (req, res) => {
+router.post("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
   const { name } = req.body;
   const { workspaceId } = req.params; // Get workspaceId from URL
   try {
