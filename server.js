@@ -10,20 +10,16 @@ const jwt = require("jsonwebtoken");
 const pool = require("./src/config/db"); // Import database connection
 const workspaceRoutes = require("./src/routes/workspaceRoutes");
 const boardRoutes = require("./src/routes/boardRoutes");
+const columnRoutes = require("./src/routes/columnRoutes"); // Import column routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-
 
 // Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
-
-
-
 
 app.use(
     cors({
@@ -39,7 +35,8 @@ app.use(passport.initialize());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/api/workspaces", workspaceRoutes);
-app.use("/api/boards", boardRoutes);;
+app.use("/api/boards", boardRoutes);
+app.use("/api/columns", columnRoutes); // Use column routes
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
@@ -66,7 +63,5 @@ app.get('/api/data', ensureAuthenticated, (req, res) => {
     userOauth_id: req.user.oauth_id
   });
 });
-
-
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
