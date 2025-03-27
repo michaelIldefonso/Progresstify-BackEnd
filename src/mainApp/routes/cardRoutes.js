@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('../config/db'); // Import database connection
+const pool = require('../../config/db'); // Import database connection
 const router = express.Router();
 
 // GET route to fetch cards

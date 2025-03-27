@@ -8,10 +8,10 @@ const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const pool = require("./src/config/db"); // Import database connection
-const workspaceRoutes = require("./src/routes/workspaceRoutes");
-const boardRoutes = require("./src/routes/boardRoutes");
-const columnRoutes = require("./src/routes/columnRoutes"); // Import column routes
-const cardRoutes = require('./src/routes/cardRoutes');
+const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
+const boardRoutes = require("./src/mainApp/routes/boardRoutes");
+const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import column routes
+const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -24,9 +24,9 @@ app.use(express.json());
 
 app.use(
     cors({
-      origin: CLIENT_URL,
-      credentials: true,
-      allowedHeaders: ["Authorization", "Content-Type"]
+        origin: CLIENT_URL,
+        credentials: true,
+        allowedHeaders: ["Authorization", "Content-Type"],
     })
 );
 
@@ -38,32 +38,32 @@ app.use("/users", userRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes); // Use column routes
-app.use('/api/cards', cardRoutes); // Use card routes
+app.use("/api/cards", cardRoutes); // Use card routes
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
 });
 
 app.get("/api/users", ensureAuthenticated, async (req, res) => {
-  try {
-      const result = await pool.query(
-          "SELECT id, email FROM users" // Fetch users without sensitive data
-      );
-      res.json(result.rows);
-  } catch (err) {
-      console.error("Error fetching users:", err);
-      res.status(500).json({ error: err.message });
-  }
+    try {
+        const result = await pool.query(
+            "SELECT id, email FROM users" // Fetch users without sensitive data
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
-app.get('/api/data', ensureAuthenticated, (req, res) => {
-  res.json({
-    message: 'This is some data from the API',
-    userId: req.user.id,
-    userEmail: req.user.email,
-    userName: req.user.name,
-    userOauth_id: req.user.oauth_id
-  });
+app.get("/api/data", ensureAuthenticated, (req, res) => {
+    res.json({
+        message: "This is some data from the API",
+        userId: req.user.id,
+        userEmail: req.user.email,
+        userName: req.user.name,
+        userOauth_id: req.user.oauth_id,
+    });
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -1,6 +1,6 @@
 const express = require("express");
-const pool = require("../config/db");
-const ensureAuthenticated = require("../middleware/authMiddleware");
+const pool = require("../../config/db");
+const ensureAuthenticated = require("../../middleware/authMiddleware");
 
 const router = express.Router({ mergeParams: true }); // Enable access to boardId from parent route
 

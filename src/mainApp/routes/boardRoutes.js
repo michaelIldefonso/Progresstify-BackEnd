@@ -1,6 +1,6 @@
 const express = require("express");
-const pool = require("../config/db");
-const ensureAuthenticated = require("../middleware/authMiddleware");
+const pool = require("../../config/db"); // Updated path
+const ensureAuthenticated = require("../../middleware/authMiddleware"); // Updated path
 
 const router = express.Router({ mergeParams: true }); // Enable access to workspaceId from parent route
 
