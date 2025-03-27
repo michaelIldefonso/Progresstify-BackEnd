@@ -28,4 +28,53 @@ router.post("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Delete a workspace
+router.delete("/workspace/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      "DELETE FROM workspaces WHERE id = $1 AND owner_id = $2 RETURNING *",
+      [id, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Workspace not found or not authorized" });
+    }
+
+    res.status(200).json({ message: "Workspace deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Rename a workspace
+router.put("/workspace/:id/rename", ensureAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newName } = req.body;
+    const userId = req.user.id;
+
+    if (!newName) {
+      return res.status(400).json({ message: "New name is required" });
+    }
+
+    const result = await pool.query(
+      "UPDATE workspaces SET name = $1 WHERE id = $2 AND owner_id = $3 RETURNING *",
+      [newName, id, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Workspace not found or not authorized" });
+    }
+
+    res.status(200).json({ message: "Workspace renamed successfully", workspace: result.rows[0] });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

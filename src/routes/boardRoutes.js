@@ -30,4 +30,50 @@ router.post("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
   }
 });
 
+// Delete a board
+router.delete("/:workspaceId/boards/:boardId", ensureAuthenticated, async (req, res) => {
+    const { workspaceId, boardId } = req.params;
+    try {
+        const result = await pool.query(
+            "DELETE FROM boards WHERE id = $1 AND workspace_id = $2 RETURNING *",
+            [boardId, workspaceId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Board not found or not authorized" });
+        }
+
+        res.status(200).json({ message: "Board deleted successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Rename a board
+router.put("/:workspaceId/boards/:boardId/rename", ensureAuthenticated, async (req, res) => {
+    const { workspaceId, boardId } = req.params;
+    const { newName } = req.body;
+
+    if (!newName) {
+        return res.status(400).json({ message: "New name is required" });
+    }
+
+    try {
+        const result = await pool.query(
+            "UPDATE boards SET name = $1 WHERE id = $2 AND workspace_id = $3 RETURNING *",
+            [newName, boardId, workspaceId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Board not found or not authorized" });
+        }
+
+        res.status(200).json({ message: "Board renamed successfully", board: result.rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

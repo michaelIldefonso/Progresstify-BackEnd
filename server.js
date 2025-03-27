@@ -11,6 +11,7 @@ const pool = require("./src/config/db"); // Import database connection
 const workspaceRoutes = require("./src/routes/workspaceRoutes");
 const boardRoutes = require("./src/routes/boardRoutes");
 const columnRoutes = require("./src/routes/columnRoutes"); // Import column routes
+const cardRoutes = require('./src/routes/cardRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ app.use("/users", userRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes); // Use column routes
+app.use('/api/cards', cardRoutes); // Use card routes
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
