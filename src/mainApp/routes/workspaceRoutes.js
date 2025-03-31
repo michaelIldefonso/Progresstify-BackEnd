@@ -5,10 +5,8 @@ const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
 
 const router = express.Router();
 
-router.use(updateLastActive); // Apply middleware to all routes
-
 // Get workspaces for a user
-router.get("/", ensureAuthenticated, async (req, res) => {
+router.get("/", ensureAuthenticated, updateLastActive, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM workspaces WHERE owner_id = $1", [req.user.id]);
     res.json(result.rows);
@@ -18,7 +16,7 @@ router.get("/", ensureAuthenticated, async (req, res) => {
 });
 
 // Create a new workspace
-router.post("/", ensureAuthenticated, async (req, res) => {
+router.post("/", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { name } = req.body;
   try {
     const result = await pool.query(
@@ -32,7 +30,7 @@ router.post("/", ensureAuthenticated, async (req, res) => {
 });
 
 // Delete a workspace
-router.delete("/workspace/:id", ensureAuthenticated, async (req, res) => {
+router.delete("/workspace/:id", ensureAuthenticated, updateLastActive, async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -54,7 +52,7 @@ router.delete("/workspace/:id", ensureAuthenticated, async (req, res) => {
 });
 
 // Rename a workspace
-router.put("/workspace/:id/rename", ensureAuthenticated, async (req, res) => {
+router.put("/workspace/:id/rename", ensureAuthenticated, updateLastActive, async (req, res) => {
   try {
     const { id } = req.params;
     const { newName } = req.body;

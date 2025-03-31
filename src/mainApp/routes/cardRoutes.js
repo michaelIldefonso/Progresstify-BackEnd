@@ -1,13 +1,12 @@
 const express = require('express');
 const pool = require('../../config/db'); // Import database connection
 const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
+const ensureAuthenticated = require("../../middleware/authMiddleware"); // Import authentication middleware
 
 const router = express.Router();
 
-router.use(updateLastActive); // Apply middleware to all routes
-
 // GET route to fetch cards
-router.get('/cards', async (req, res) => {
+router.get('/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
     try {
         const result = await pool.query("SELECT id, column_id, text, checked, \"order\" FROM cards");
         res.json(result.rows);
@@ -17,7 +16,7 @@ router.get('/cards', async (req, res) => {
 });
 
 // POST route to create a new card
-router.post('/cards', async (req, res) => {
+router.post('/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { column_id, text, checked, order } = req.body;
     try {
         const result = await pool.query(
@@ -31,7 +30,7 @@ router.post('/cards', async (req, res) => {
 });
 
 // DELETE route to delete a card
-router.delete('/cards/:id', async (req, res) => {
+router.delete('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query("DELETE FROM cards WHERE id = $1 RETURNING *", [id]);
@@ -45,7 +44,7 @@ router.delete('/cards/:id', async (req, res) => {
 });
 
 // PUT route to rename/retitle a card
-router.put('/cards/:id', async (req, res) => {
+router.put('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
     const { title, text, checked, order } = req.body;
     try {
@@ -63,7 +62,7 @@ router.put('/cards/:id', async (req, res) => {
 });
 
 // PATCH route to toggle the checked status of a card
-router.patch('/cards/:id/checked', async (req, res) => {
+router.patch('/cards/:id/checked', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
     const { checked } = req.body;
 

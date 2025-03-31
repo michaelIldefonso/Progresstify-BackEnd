@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true }); // Enable access to boardI
 router.use(updateLastActive); // Apply middleware to all routes
 
 // Get columns in a board
-router.get("/:boardId/columns", ensureAuthenticated, async (req, res) => {
+router.get("/:boardId/columns", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { boardId } = req.params; // Get boardId from URL
   try {
     const result = await pool.query("SELECT * FROM columns WHERE board_id = $1 ORDER BY \"order\"", [boardId]);
@@ -19,7 +19,7 @@ router.get("/:boardId/columns", ensureAuthenticated, async (req, res) => {
 });
 
 // Create a new column
-router.post("/:boardId/columns", ensureAuthenticated, async (req, res) => {
+router.post("/:boardId/columns", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { boardId } = req.params;
   const { title, order } = req.body;
   try {
@@ -34,7 +34,7 @@ router.post("/:boardId/columns", ensureAuthenticated, async (req, res) => {
 });
 
 // Delete a column
-router.delete("/:boardId/columns/:columnId", ensureAuthenticated, async (req, res) => {
+router.delete("/:boardId/columns/:columnId", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { columnId } = req.params;
   try {
     await pool.query('DELETE FROM columns WHERE id = $1', [columnId]);
@@ -45,7 +45,7 @@ router.delete("/:boardId/columns/:columnId", ensureAuthenticated, async (req, re
 });
 
 // Rename a column
-router.put("/:boardId/columns/:columnId", ensureAuthenticated, async (req, res) => {
+router.put("/:boardId/columns/:columnId", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { columnId } = req.params;
   const { title } = req.body;
   try {
@@ -60,7 +60,7 @@ router.put("/:boardId/columns/:columnId", ensureAuthenticated, async (req, res) 
 });
 
 // Update column order
-router.put("/:boardId/columns/:columnId/order", ensureAuthenticated, async (req, res) => {
+router.put("/:boardId/columns/:columnId/order", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { boardId, columnId } = req.params;
   const { newOrder } = req.body;
   try {

@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true }); // Enable access to worksp
 router.use(updateLastActive); // Apply middleware to all routes
 
 // Get boards in a workspace
-router.get("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
+router.get("/:workspaceId/boards", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { workspaceId } = req.params; // Get workspaceId from URL
   try {
     const result = await pool.query("SELECT * FROM boards WHERE workspace_id = $1", [workspaceId]);
@@ -19,7 +19,7 @@ router.get("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
 });
 
 // Create a new board
-router.post("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
+router.post("/:workspaceId/boards", ensureAuthenticated, updateLastActive, async (req, res) => {
   const { name } = req.body;
   const { workspaceId } = req.params; // Get workspaceId from URL
   try {
@@ -34,7 +34,7 @@ router.post("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {
 });
 
 // Delete a board
-router.delete("/:workspaceId/boards/:boardId", ensureAuthenticated, async (req, res) => {
+router.delete("/:workspaceId/boards/:boardId", ensureAuthenticated, updateLastActive, async (req, res) => {
     const { workspaceId, boardId } = req.params;
     try {
         const result = await pool.query(
@@ -54,7 +54,7 @@ router.delete("/:workspaceId/boards/:boardId", ensureAuthenticated, async (req, 
 });
 
 // Rename a board
-router.put("/:workspaceId/boards/:boardId/rename", ensureAuthenticated, async (req, res) => {
+router.put("/:workspaceId/boards/:boardId/rename", ensureAuthenticated, updateLastActive, async (req, res) => {
     const { workspaceId, boardId } = req.params;
     const { newName } = req.body;
 

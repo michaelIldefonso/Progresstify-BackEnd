@@ -12,6 +12,7 @@ const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
 const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import column routes
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
+const updateLastActive = require("./src/middleware/updateLastActiveMiddleware"); // Import middleware
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -44,7 +45,7 @@ app.get("/", (req, res) => {
     res.send("Welcome to the API");
 });
 
-app.get("/api/users", ensureAuthenticated, async (req, res) => {
+app.get("/api/users", ensureAuthenticated, updateLastActive, async (req, res) => {
     try {
         const result = await pool.query(
             "SELECT id, email FROM users" // Fetch users without sensitive data
@@ -56,7 +57,7 @@ app.get("/api/users", ensureAuthenticated, async (req, res) => {
     }
 });
 
-app.get("/api/data", ensureAuthenticated, (req, res) => {
+app.get("/api/data", ensureAuthenticated, updateLastActive, (req, res) => {
     res.json({
         message: "This is some data from the API",
         userId: req.user.id,
