@@ -14,6 +14,7 @@ function ensureAuthenticated(req, res, next) {
         }
 
         req.user = user;
+        console.log("Authenticated user:", req.user); // Debug log
         next();
     });
 }

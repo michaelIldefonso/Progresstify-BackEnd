@@ -1,8 +1,11 @@
 const express = require("express");
 const pool = require("../../config/db"); // Updated path
 const ensureAuthenticated = require("../../middleware/authMiddleware"); // Updated path
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
 
 const router = express.Router({ mergeParams: true }); // Enable access to workspaceId from parent route
+
+router.use(updateLastActive); // Apply middleware to all routes
 
 // Get boards in a workspace
 router.get("/:workspaceId/boards", ensureAuthenticated, async (req, res) => {

@@ -1,6 +1,10 @@
 const express = require('express');
 const pool = require('../../config/db'); // Import database connection
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
+
 const router = express.Router();
+
+router.use(updateLastActive); // Apply middleware to all routes
 
 // GET route to fetch cards
 router.get('/cards', async (req, res) => {

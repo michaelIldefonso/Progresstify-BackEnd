@@ -1,8 +1,11 @@
 const express = require("express");
 const pool = require("../../config/db");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
 
 const router = express.Router({ mergeParams: true }); // Enable access to boardId from parent route
+
+router.use(updateLastActive); // Apply middleware to all routes
 
 // Get columns in a board
 router.get("/:boardId/columns", ensureAuthenticated, async (req, res) => {

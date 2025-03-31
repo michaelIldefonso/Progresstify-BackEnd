@@ -1,8 +1,11 @@
 const express = require("express");
 const pool = require("../../config/db");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
 
 const router = express.Router();
+
+router.use(updateLastActive); // Apply middleware to all routes
 
 // Get workspaces for a user
 router.get("/", ensureAuthenticated, async (req, res) => {
