@@ -37,10 +37,13 @@ passport.use(new GoogleStrategy({
         if (userResult.rows.length === 0) {
             // If user does not exist, create a new user
             const insertResult = await pool.query(
-                'INSERT INTO users (email, name, oauth_id, oauth_provider) VALUES ($1, $2, $3, $4) RETURNING *',
+                'INSERT INTO users (email, name, oauth_id, oauth_provider, last_login) VALUES ($1, $2, $3, $4, NOW()) RETURNING *',
                 [email, name, profile.id, oauthProvider]
             );
             userResult = insertResult;
+        } else {
+            // Update last_login for existing user
+            await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userResult.rows[0].id]);
         }
 
         const user = userResult.rows[0];

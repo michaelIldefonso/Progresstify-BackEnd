@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/me", ensureAuthenticated, async (req, res) => {
     try {
         const user = req.user;
-        res.json({ id: user.id, email: user.email });
+        res.json({ id: user.id, email: user.email, last_login: user.last_login });
     } catch (err) {
         console.error("Error fetching user:", err);
         res.status(500).json({ error: err.message });
