@@ -1,7 +1,7 @@
 
 import express from 'express';
-import { checkAdmin } from '../src/adminApp/middleware/checkAdmin';
-import { getAllUsers } from '../src/adminApp/controllers/userController';
+import { checkAdmin } from '../middleware/checkAdmin';
+import { getAllUsers } from '../controllers/userController';
 
 const router = express.Router();
 
