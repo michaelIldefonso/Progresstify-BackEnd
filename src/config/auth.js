@@ -22,42 +22,121 @@ const getUserFromDB = async (id) => {
     }
 };
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
-}, async (accessToken, refreshToken, profile, done) => {
-    try {
-        const { email, name } = profile._json;
-        const oauthProvider = 'google';  // Store provider dynamically
+passport.use(
+    "google",
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.GOOGLE_CALLBACK_URL, // Default callback for main app
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                console.log("Access Token:", accessToken); // Debug log
+                console.log("Profile:", profile); // Debug log
 
-        // Check if user exists in the database
-        let userResult = await pool.query('SELECT * FROM users WHERE oauth_id = $1 AND oauth_provider = $2', [profile.id, oauthProvider]);
+                const { email, name } = profile._json;
+                const oauthProvider = 'google';
 
-        if (userResult.rows.length === 0) {
-            // If user does not exist, create a new user
-            const insertResult = await pool.query(
-                'INSERT INTO users (email, name, oauth_id, oauth_provider, last_login) VALUES ($1, $2, $3, $4, NOW()) RETURNING *',
-                [email, name, profile.id, oauthProvider]
-            );
-            userResult = insertResult;
-        } else {
-            // Update last_login for existing user
-            await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userResult.rows[0].id]);
+                // Check if user exists in the database
+                let userResult = await pool.query(
+                    'SELECT * FROM users WHERE oauth_id = $1 AND oauth_provider = $2',
+                    [profile.id, oauthProvider]
+                );
+
+                if (userResult.rows.length === 0) {
+                    const insertResult = await pool.query(
+                        'INSERT INTO users (email, name, oauth_id, oauth_provider, last_login) VALUES ($1, $2, $3, $4, NOW()) RETURNING *',
+                        [email, name, profile.id, oauthProvider]
+                    );
+                    userResult = insertResult;
+                } else {
+                    await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [
+                        userResult.rows[0].id,
+                    ]);
+                }
+
+                const user = userResult.rows[0];
+                user.generateJwt = function () {
+                    return jwt.sign(
+                        {
+                            id: this.id,
+                            email: this.email,
+                            oauth_id: this.oauth_id,
+                            name: this.name,
+                            role_id: this.role_id,
+                        },
+                        process.env.JWT_SECRET,
+                        { expiresIn: "1h" }
+                    );
+                };
+
+                return done(null, user);
+            } catch (err) {
+                console.error("Error in GoogleStrategy callback:", err); // Log the error
+                return done(err, null);
+            }
         }
+    )
+);
 
-        const user = userResult.rows[0];
-        user.generateJwt = function () {
-            return jwt.sign({ id: this.id, email: this.email, oauth_id: this.oauth_id, name: this.name }, process.env.JWT_SECRET, { expiresIn: "1h" });
-        };
+passport.use(
+    "google-admin",
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: process.env.ADMIN_GOOGLE_CALLBACK_URL, // Callback for admin app
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                console.log("Access Token:", accessToken); // Debug log
+                console.log("Profile:", profile); // Debug log
 
-        console.log("User authenticated:", user);
-        return done(null, user);
-    } catch (err) {
-        console.error("Error in GoogleStrategy callback:", err);
-        return done(err, null);
-    }
-}));
+                const { email, name } = profile._json;
+                const oauthProvider = 'google';
+
+                // Check if user exists in the database
+                let userResult = await pool.query(
+                    'SELECT * FROM users WHERE oauth_id = $1 AND oauth_provider = $2',
+                    [profile.id, oauthProvider]
+                );
+
+                if (userResult.rows.length === 0) {
+                    const insertResult = await pool.query(
+                        'INSERT INTO users (email, name, oauth_id, oauth_provider, last_login) VALUES ($1, $2, $3, $4, NOW()) RETURNING *',
+                        [email, name, profile.id, oauthProvider]
+                    );
+                    userResult = insertResult;
+                } else {
+                    await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [
+                        userResult.rows[0].id,
+                    ]);
+                }
+
+                const user = userResult.rows[0];
+                user.generateJwt = function () {
+                    return jwt.sign(
+                        {
+                            id: this.id,
+                            email: this.email,
+                            oauth_id: this.oauth_id,
+                            name: this.name,
+                            role_id: this.role_id,
+                        },
+                        process.env.JWT_SECRET,
+                        { expiresIn: "1h" }
+                    );
+                };
+
+                return done(null, user);
+            } catch (err) {
+                console.error("Error in GoogleStrategy callback:", err); // Log the error
+                return done(err, null);
+            }
+        }
+    )
+);
 
 passport.serializeUser((user, done) => {
     console.log("Serializing User:", user);
