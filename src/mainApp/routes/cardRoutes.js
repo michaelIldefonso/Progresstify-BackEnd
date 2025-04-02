@@ -5,10 +5,18 @@ const ensureAuthenticated = require("../../middleware/authMiddleware"); // Impor
 
 const router = express.Router();
 
-// GET route to fetch cards
-router.get('/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
+// GET route to fetch cards by board
+router.get('/boards/:boardId/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
+    const { boardId } = req.params;
     try {
-        const result = await pool.query("SELECT id, column_id, text, checked, \"order\" FROM cards");
+        const result = await pool.query(
+            `SELECT cards.id, cards.column_id, cards.text, cards.checked, cards.position
+             FROM cards
+             INNER JOIN columns ON cards.column_id = columns.id
+             WHERE columns.board_id = $1
+             ORDER BY cards.position`,
+            [boardId]
+        );
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -17,11 +25,11 @@ router.get('/cards', ensureAuthenticated, updateLastActive, async (req, res) => 
 
 // POST route to create a new card
 router.post('/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { column_id, text, checked, order } = req.body;
+    const { column_id, text, checked, position } = req.body;
     try {
         const result = await pool.query(
-            "INSERT INTO cards (column_id, text, checked, \"order\") VALUES ($1, $2, $3, $4) RETURNING *",
-            [column_id, text, checked, order]
+            "INSERT INTO cards (column_id, text, checked, position) VALUES ($1, $2, $3, $4) RETURNING *",
+            [column_id, text, checked, position]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -46,11 +54,11 @@ router.delete('/cards/:id', ensureAuthenticated, updateLastActive, async (req, r
 // PUT route to rename/retitle a card
 router.put('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
-    const { title, text, checked, order } = req.body;
+    const { title, text, checked, position } = req.body;
     try {
         const result = await pool.query(
-            "UPDATE cards SET title = $1, text = $2, checked = $3, \"order\" = $4 WHERE id = $5 RETURNING *",
-            [title, text, checked, order, id]
+            "UPDATE cards SET title = $1, text = $2, checked = $3, position = $4 WHERE id = $5 RETURNING *",
+            [title, text, checked, position, id]
         );
         if (result.rowCount === 0) {
             return res.status(404).json({ message: "Card not found" });
