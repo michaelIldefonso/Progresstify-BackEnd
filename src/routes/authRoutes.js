@@ -10,7 +10,7 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 
 router.get(
     "/google/callback",
-    passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+    passport.authenticate("google", { session: false, failureRedirect: "/" }),
     (req, res) => {
         try {
             const token = req.user.generateJwt();
@@ -30,7 +30,7 @@ router.get(
 
 router.get(
     "/admin/google/callback",
-    passport.authenticate("google-admin", { session: false, failureRedirect: "/login" }),
+    passport.authenticate("google-admin", { session: false, failureRedirect: "/" }),
     checkAdmin, // Ensure the user is an admin
     (req, res) => {
         try {

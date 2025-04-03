@@ -13,19 +13,21 @@ const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import column routes
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 const updateLastActive = require("./src/middleware/updateLastActiveMiddleware"); // Import middleware
+const adminRoutes = require("./src/routes/adminRoutes"); // Import admin routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Automatically set frontend URL (from `.env`)
 const CLIENT_URL = process.env.CLIENT_URL;
+const ADMIN_URL = process.env.ADMIN_URL;
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
 app.use(
     cors({
-        origin: CLIENT_URL,
+        origin: [CLIENT_URL, ADMIN_URL], // Wrap multiple origins in an array
         credentials: true,
         allowedHeaders: ["Authorization", "Content-Type"],
     })
@@ -40,23 +42,10 @@ app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes); // Use column routes
 app.use("/api/cards", cardRoutes); // Use card routes
+app.use("/api/admin", adminRoutes); // Use admin routes
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
-});
-
-app.get("/api/users", ensureAuthenticated, updateLastActive, async (req, res) => {
-    try {
-        const result = await pool.query(
-            `SELECT users.id, users.email, users.role_id
-             FROM users
-             LEFT JOIN roles ON users.role_id = roles.id` // Join roles table to fetch role_id
-        );
-        res.json(result.rows);
-    } catch (err) {
-        console.error("Error fetching users:", err);
-        res.status(500).json({ error: err.message });
-    }
 });
 
 app.get("/api/data", ensureAuthenticated, updateLastActive, (req, res) => {
@@ -66,6 +55,7 @@ app.get("/api/data", ensureAuthenticated, updateLastActive, (req, res) => {
         userEmail: req.user.email,
         userName: req.user.name,
         userOauth_id: req.user.oauth_id,
+        userRole: req.user.role_id,
     });
 });
 
