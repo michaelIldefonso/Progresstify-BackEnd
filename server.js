@@ -48,7 +48,9 @@ app.get("/", (req, res) => {
 app.get("/api/users", ensureAuthenticated, updateLastActive, async (req, res) => {
     try {
         const result = await pool.query(
-            "SELECT id, email FROM users" // Fetch users without sensitive data
+            `SELECT users.id, users.email, users.role_id
+             FROM users
+             LEFT JOIN roles ON users.role_id = roles.id` // Join roles table to fetch role_id
         );
         res.json(result.rows);
     } catch (err) {
