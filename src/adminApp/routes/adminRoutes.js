@@ -1,7 +1,7 @@
 const express = require("express");
-const ensureAuthenticated = require("../middleware/authMiddleware");
-const updateLastActive = require("../middleware/updateLastActiveMiddleware");
-const pool = require("../config/db");
+const ensureAuthenticated = require("../../middleware/authMiddleware");
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const pool = require("../../config/db");
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ const router = express.Router();
 router.get("/users", ensureAuthenticated, updateLastActive, async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT users.id, users.email, users.role_id
+            `SELECT users.id, users.email, users.role_id, roles.name AS role_name
              FROM users
              LEFT JOIN roles ON users.role_id = roles.id`
         );
