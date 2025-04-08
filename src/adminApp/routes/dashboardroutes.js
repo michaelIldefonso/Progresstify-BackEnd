@@ -5,7 +5,9 @@ const pool = require('../../config/db');
 // Route to get the count of active accounts
 router.get('/charts/active-accounts', async (req, res) => {
     try {
-        const result = await pool.query('SELECT COUNT(*) AS active_accounts FROM users WHERE is_active = true');
+        const result = await pool.query(
+            'SELECT COUNT(*) AS active_accounts FROM users WHERE last_active >= NOW() - INTERVAL \'7 days\''
+        );
         res.json({ activeAccounts: result.rows[0].active_accounts });
     } catch (err) {
         console.error("Error fetching active accounts:", err);

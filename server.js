@@ -13,7 +13,7 @@ const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import column routes
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 const updateLastActive = require("./src/middleware/updateLastActiveMiddleware"); // Import middleware
-const adminRoutes = require("./src/adminApp/routes/adminRoutes"); // Import admin routes
+const adminRoutes = require("./src/adminApp/routes/userManagement"); // Import admin routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
