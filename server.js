@@ -14,6 +14,7 @@ const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import col
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 const updateLastActive = require("./src/middleware/updateLastActiveMiddleware"); // Import middleware
 const adminRoutes = require("./src/adminApp/routes/userManagement"); // Import admin routes
+const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes"); // Import dashboard routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,6 +44,7 @@ app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes); // Use column routes
 app.use("/api/cards", cardRoutes); // Use card routes
 app.use("/api/admin", adminRoutes); // Use admin routes
+app.use("/api/admin/dashboard", dashboardRoutes); // Use dashboard routes
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");

@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../../config/db');
+const ensureAuthenticated = require('../../middleware/authMiddleware');
+const checkAdmin = require('../../middleware/checkAdmin');
 
 // Route to get the count of active accounts
-router.get('/charts/active-accounts', async (req, res) => {
+router.get('/charts/active-accounts', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const result = await pool.query(
             'SELECT COUNT(*) AS active_accounts FROM users WHERE last_active >= NOW() - INTERVAL \'7 days\''
@@ -16,7 +18,7 @@ router.get('/charts/active-accounts', async (req, res) => {
 });
 
 // Route to get the count of new users
-router.get('/charts/new-users', async (req, res) => {
+router.get('/charts/new-users', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const result = await pool.query('SELECT COUNT(*) AS new_users FROM users WHERE created_at >= NOW() - INTERVAL \'30 days\'');
         res.json({ newUsers: result.rows[0].new_users });
@@ -27,7 +29,7 @@ router.get('/charts/new-users', async (req, res) => {
 });
 
 // Route to get the total number of users
-router.get('/charts/total-users', async (req, res) => {
+router.get('/charts/total-users', ensureAuthenticated, checkAdmin, async (req, res) => {
     try {
         const result = await pool.query('SELECT COUNT(*) AS total_users FROM users');
         res.json({ totalUsers: result.rows[0].total_users });
