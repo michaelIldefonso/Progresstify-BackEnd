@@ -1,20 +1,30 @@
 require("dotenv").config();
 const express = require("express");
-const passport = require("./src/config/auth");
-const authRoutes = require("./src/routes/authRoutes");
-const userRoutes = require("./src/routes/userRoutes");
-const cors = require("cors");
-const ensureAuthenticated = require("./src/middleware/authMiddleware");
 const path = require("path");
+const cors = require("cors");
 const jwt = require("jsonwebtoken");
-const pool = require("./src/config/db"); // Import database connection
+
+// Config imports
+const passport = require("./src/config/auth");
+const pool = require("./src/config/db");
+
+// Middleware imports
+const ensureAuthenticated = require("./src/middleware/authMiddleware");
+const updateLastActive = require("./src/middleware/updateLastActiveMiddleware");
+
+// Route imports - MainApp
 const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
 const boardRoutes = require("./src/mainApp/routes/boardRoutes");
-const columnRoutes = require("./src/mainApp/routes/columnRoutes"); // Import column routes
+const columnRoutes = require("./src/mainApp/routes/columnRoutes");
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
-const updateLastActive = require("./src/middleware/updateLastActiveMiddleware"); // Import middleware
-const adminRoutes = require("./src/adminApp/routes/userManagement"); // Import admin routes
-const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes"); // Import dashboard routes
+
+// Route imports - AdminApp
+const adminRoutes = require("./src/adminApp/routes/userManagement");
+const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
+
+// Route imports - General
+const authRoutes = require("./src/routes/authRoutes");
+const userRoutes = require("./src/routes/userRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
