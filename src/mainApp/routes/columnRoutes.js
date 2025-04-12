@@ -7,12 +7,35 @@ const router = express.Router({ mergeParams: true }); // Enable access to boardI
 
 router.use(updateLastActive); // Apply middleware to all routes
 
-// Get columns in a board
-router.get("/:boardId/columns", ensureAuthenticated, updateLastActive, async (req, res) => {
-  const { boardId } = req.params; // Get boardId from URL
+// Get columns and their associated cards in a board
+router.get("/:boardId/columns-with-cards", ensureAuthenticated, updateLastActive, async (req, res) => {
+  const { boardId } = req.params;
   try {
-    const result = await pool.query("SELECT * FROM columns WHERE board_id = $1 ORDER BY \"order\"", [boardId]);
-    res.json(result.rows);
+    // Fetch columns for the board
+    const columnsResult = await pool.query(
+      "SELECT * FROM columns WHERE board_id = $1 ORDER BY \"order\"",
+      [boardId]
+    );
+    const columns = columnsResult.rows;
+
+    // Fetch cards for the board
+    const cardsResult = await pool.query(
+      `SELECT cards.id, cards.column_id, cards.text, cards.checked, cards.position
+       FROM cards
+       INNER JOIN columns ON cards.column_id = columns.id
+       WHERE columns.board_id = $1
+       ORDER BY cards.position`,
+      [boardId]
+    );
+    const cards = cardsResult.rows;
+
+    // Combine columns with their associated cards
+    const columnsWithCards = columns.map(column => ({
+      ...column,
+      cards: cards.filter(card => card.column_id === column.id),
+    }));
+
+    res.json(columnsWithCards);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

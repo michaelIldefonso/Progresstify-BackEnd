@@ -5,24 +5,6 @@ const ensureAuthenticated = require("../../middleware/authMiddleware"); // Impor
 
 const router = express.Router();
 
-// GET route to fetch cards by board
-router.get('/boards/:boardId/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { boardId } = req.params;
-    try {
-        const result = await pool.query(
-            `SELECT cards.id, cards.column_id, cards.text, cards.checked, cards.position
-             FROM cards
-             INNER JOIN columns ON cards.column_id = columns.id
-             WHERE columns.board_id = $1
-             ORDER BY cards.position`,
-            [boardId]
-        );
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 // POST route to create a new card
 router.post('/create', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { column_id, text, checked, position } = req.body;
@@ -38,7 +20,7 @@ router.post('/create', ensureAuthenticated, updateLastActive, async (req, res) =
 });
 
 // DELETE route to delete a card
-router.delete('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
+router.delete('/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query("DELETE FROM cards WHERE id = $1 RETURNING *", [id]);
@@ -70,7 +52,7 @@ router.put('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res)
 });
 
 // PATCH route to toggle the checked status of a card
-router.patch('/cards/:id/checked', ensureAuthenticated, updateLastActive, async (req, res) => {
+router.patch('/:id/checked', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { id } = req.params;
     const { checked } = req.body;
 
