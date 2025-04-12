@@ -67,7 +67,7 @@ passport.use(
                             role_id: this.role_id,
                         },
                         process.env.JWT_SECRET,
-                        { expiresIn: "1h" }
+                        { expiresIn: "5h" }
                     );
                 };
 
@@ -125,7 +125,7 @@ passport.use(
                             role_id: this.role_id,
                         },
                         process.env.JWT_SECRET,
-                        { expiresIn: "1h" }
+                        { expiresIn: "5h" }
                     );
                 };
 

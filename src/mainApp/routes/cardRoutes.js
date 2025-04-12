@@ -24,7 +24,7 @@ router.get('/boards/:boardId/cards', ensureAuthenticated, updateLastActive, asyn
 });
 
 // POST route to create a new card
-router.post('/cards', ensureAuthenticated, updateLastActive, async (req, res) => {
+router.post('/create', ensureAuthenticated, updateLastActive, async (req, res) => {
     const { column_id, text, checked, position } = req.body;
     try {
         const result = await pool.query(
