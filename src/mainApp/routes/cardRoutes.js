@@ -74,4 +74,63 @@ router.patch('/:id/checked', ensureAuthenticated, updateLastActive, async (req, 
     }
 });
 
+// PATCH route to move a card to another column or update its position
+router.patch('/:id/move', ensureAuthenticated, updateLastActive, async (req, res) => {
+    const { id } = req.params;
+    const { column_id, position } = req.body;
+
+    if (typeof position !== 'number') {
+        return res.status(400).json({ message: "Position must be a number" });
+    }
+
+    try {
+        // Fetch the current column_id if not provided
+        let currentColumnId = column_id;
+        if (!column_id) {
+            const cardResult = await pool.query("SELECT column_id FROM cards WHERE id = $1", [id]);
+            if (cardResult.rowCount === 0) {
+                return res.status(404).json({ message: "Card not found" });
+            }
+            currentColumnId = cardResult.rows[0].column_id;
+        }
+
+        // Update the card's column and/or position
+        const result = await pool.query(
+            "UPDATE cards SET column_id = $1, position = $2 WHERE id = $3 RETURNING *",
+            [currentColumnId, position, id]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Card not found" });
+        }
+
+        res.status(200).json({ message: "Card moved successfully", card: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// PATCH route to change the position of a card
+router.patch('/:id/position', ensureAuthenticated, updateLastActive, async (req, res) => {
+    const { id } = req.params;
+    const { position } = req.body;
+
+    if (typeof position !== 'number') {
+        return res.status(400).json({ message: "Position must be a numeric" });
+    }
+
+    try {
+        const result = await pool.query(
+            "UPDATE cards SET position = $1 WHERE id = $2 RETURNING *",
+            [position, id]
+        );
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Card not found" });
+        }
+        res.status(200).json({ message: "Card position updated successfully", card: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
