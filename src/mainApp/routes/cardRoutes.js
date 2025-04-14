@@ -1,136 +1,23 @@
-const express = require('express');
-const pool = require('../../config/db'); // Import database connection
-const updateLastActive = require("../../middleware/updateLastActiveMiddleware"); // Import middleware
-const ensureAuthenticated = require("../../middleware/authMiddleware"); // Import authentication middleware
+const express = require("express");
+const ensureAuthenticated = require("../../middleware/authMiddleware");
+const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const cardController = require("../controllers/cardController"); // Import controller
 
 const router = express.Router();
 
 // POST route to create a new card
-router.post('/create', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { column_id, text, checked, position } = req.body;
-    try {
-        const result = await pool.query(
-            "INSERT INTO cards (column_id, text, checked, position) VALUES ($1, $2, $3, $4) RETURNING *",
-            [column_id, text, checked, position]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+router.post("/create", ensureAuthenticated, updateLastActive, cardController.createCardHandler);
 
 // DELETE route to delete a card
-router.delete('/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await pool.query("DELETE FROM cards WHERE id = $1 RETURNING *", [id]);
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Card not found" });
-        }
-        res.status(200).json({ message: "Card deleted successfully" });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+router.delete("/:id", ensureAuthenticated, updateLastActive, cardController.deleteCardHandler);
 
-// PUT route to rename/retitle a card
-router.put('/cards/:id', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { id } = req.params;
-    const { title, text, checked, position } = req.body;
-    try {
-        const result = await pool.query(
-            "UPDATE cards SET title = $1, text = $2, checked = $3, position = $4 WHERE id = $5 RETURNING *",
-            [title, text, checked, position, id]
-        );
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Card not found" });
-        }
-        res.status(200).json({ message: "Card updated successfully", card: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// PUT route to update a card
+router.put("/cards/:id", ensureAuthenticated, updateLastActive, cardController.updateCardHandler);
 
 // PATCH route to toggle the checked status of a card
-router.patch('/:id/checked', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { id } = req.params;
-    const { checked } = req.body;
+router.patch("/:id/checked", ensureAuthenticated, updateLastActive, cardController.toggleCardCheckedHandler);
 
-    if (typeof checked !== 'boolean') {
-        return res.status(400).json({ message: "Checked status must be a boolean" });
-    }
-
-    try {
-        const result = await pool.query(
-            "UPDATE cards SET checked = $1 WHERE id = $2 RETURNING *",
-            [checked, id]
-        );
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Card not found" });
-        }
-        res.status(200).json({ message: "Card checked status updated", card: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// PATCH route to move a card to another column or update its position
-router.patch('/:id/move', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { id } = req.params;
-    const { column_id, position } = req.body;
-
-    if (typeof position !== 'number') {
-        return res.status(400).json({ message: "Position must be a number" });
-    }
-
-    try {
-        // Fetch the current column_id if not provided
-        let currentColumnId = column_id;
-        if (!column_id) {
-            const cardResult = await pool.query("SELECT column_id FROM cards WHERE id = $1", [id]);
-            if (cardResult.rowCount === 0) {
-                return res.status(404).json({ message: "Card not found" });
-            }
-            currentColumnId = cardResult.rows[0].column_id;
-        }
-
-        // Update the card's column and/or position
-        const result = await pool.query(
-            "UPDATE cards SET column_id = $1, position = $2 WHERE id = $3 RETURNING *",
-            [currentColumnId, position, id]
-        );
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Card not found" });
-        }
-
-        res.status(200).json({ message: "Card moved successfully", card: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// PATCH route to change the position of a card
-router.patch('/:id/position', ensureAuthenticated, updateLastActive, async (req, res) => {
-    const { id } = req.params;
-    const { position } = req.body;
-
-    if (typeof position !== 'number') {
-        return res.status(400).json({ message: "Position must be a numeric" });
-    }
-
-    try {
-        const result = await pool.query(
-            "UPDATE cards SET position = $1 WHERE id = $2 RETURNING *",
-            [position, id]
-        );
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Card not found" });
-        }
-        res.status(200).json({ message: "Card position updated successfully", card: result.rows[0] });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// PATCH route to move a card
+router.patch("/:id/move", ensureAuthenticated, updateLastActive, cardController.moveCardHandler);
 
 module.exports = router;
