@@ -18,9 +18,10 @@ const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes");
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 
-// Route imports - AdminApp
+// Route imports - AdminApp 
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
+
 
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
