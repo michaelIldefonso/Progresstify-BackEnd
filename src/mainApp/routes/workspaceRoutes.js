@@ -12,9 +12,9 @@ router.get("/", ensureAuthenticated, updateLastActive, workspaceController.getWo
 router.post("/", ensureAuthenticated, updateLastActive, workspaceController.createWorkspace);
 
 // Delete a workspace
-router.delete("/workspace/:id", ensureAuthenticated, updateLastActive, workspaceController.deleteWorkspace);
+router.delete("/delete/:id", ensureAuthenticated, updateLastActive, workspaceController.deleteWorkspace);
 
 // Rename a workspace
-router.put("/workspace/:id/rename", ensureAuthenticated, updateLastActive, workspaceController.renameWorkspace);
+router.put("/rename/:id", ensureAuthenticated, updateLastActive, workspaceController.renameWorkspace);
 
 module.exports = router;
