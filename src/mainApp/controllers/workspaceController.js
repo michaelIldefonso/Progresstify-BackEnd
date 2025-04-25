@@ -15,9 +15,9 @@ const getWorkspaces = async (req, res) => {
 };
 
 const createWorkspaceHandler = async (req, res) => {
-  const { name } = req.body;
+  const { name, description } = req.body; // Extract description
   try {
-    const workspace = await createWorkspace(name, req.user.id);
+    const workspace = await createWorkspace(name, req.user.id, description); // Pass description
     res.json(workspace);
   } catch (err) {
     res.status(500).json({ error: err.message });

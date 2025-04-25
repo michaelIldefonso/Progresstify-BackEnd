@@ -4,8 +4,9 @@ const getWorkspaces = async (userId) => {
   return await workspaceModel.getWorkspacesByUserId(userId);
 };
 
-const createWorkspace = async (name, userId) => {
-  return await workspaceModel.createWorkspace(name, userId);
+const createWorkspace = async (name, userId, description) => {
+  console.log("Service layer received:", { name, userId, description }); // Debug log
+  return await workspaceModel.createWorkspace(name, userId, description);
 };
 
 const deleteWorkspace = async (workspaceId, userId) => {

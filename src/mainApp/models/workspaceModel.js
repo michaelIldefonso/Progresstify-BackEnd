@@ -5,10 +5,12 @@ const getWorkspacesByUserId = async (userId) => {
   return result.rows;
 };
 
-const createWorkspace = async (name, userId) => {
+const createWorkspace = async (name, userId, description) => {
+  console.log("Model layer received:", { name, userId, description }); // Debug log
+  console.log("Database query values:", { name, userId, description }); // Debug log
   const result = await pool.query(
-    "INSERT INTO workspaces (name, owner_id) VALUES ($1, $2) RETURNING *",
-    [name, userId]
+    "INSERT INTO workspaces (name, owner_id, description) VALUES ($1, $2, $3) RETURNING *",
+    [name, userId, description]
   );
   return result.rows[0];
 };
