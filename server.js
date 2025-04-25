@@ -22,9 +22,9 @@ const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
 
-
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
+const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Import adminAuthRoutes
 const userRoutes = require("./src/routes/userRoutes");
 
 const app = express();
@@ -49,6 +49,7 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/auth/admin", adminAuthRoutes); // Use adminAuthRoutes
 app.use("/users", userRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
