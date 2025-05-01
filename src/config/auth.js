@@ -4,9 +4,6 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const jwt = require('jsonwebtoken');
 const pool = require('./db');
 
-console.log("Client ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("Client Secret:", process.env.GOOGLE_CLIENT_SECRET);
-console.log("Callback URL:", process.env.GOOGLE_CALLBACK_URL);
 
 const getUserFromDB = async (id) => {
     try {
