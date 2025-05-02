@@ -26,6 +26,7 @@ const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Import adminAuthRoutes
 const userRoutes = require("./src/routes/userRoutes");
+const firebaseRoutes = require("./src/routes/firebaseRoutes"); // Import Firebase routes
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -57,6 +58,9 @@ app.use("/api/columns", columnRoutes); // Use column routes
 app.use("/api/cards", cardRoutes); // Use card routes
 app.use("/api/admin", adminRoutes); // Use admin routes
 app.use("/api/admin/dashboard", dashboardRoutes); // Use dashboard routes
+
+// Firebase authentication routes
+app.use("/api/firebase", firebaseRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
