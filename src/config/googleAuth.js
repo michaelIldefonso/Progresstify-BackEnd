@@ -13,7 +13,12 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const user = await findOrCreateUser('google', profile);
+                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null; // Extract email
+                console.log("Google primary email:", email); // Debug log
+                if (!email) {
+                    throw new Error("Email not available in Google profile");
+                }
+                const user = await findOrCreateUser('google', { ...profile, email }); // Pass email explicitly
                 return done(null, user);
             } catch (err) {
                 console.error("Error in GoogleStrategy callback:", err);
@@ -33,7 +38,12 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                const user = await findOrCreateUser('google', profile);
+                const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null; // Extract email
+                console.log("Google Admin primary email:", email); // Debug log
+                if (!email) {
+                    throw new Error("Email not available in Google profile");
+                }
+                const user = await findOrCreateUser('google', { ...profile, email }); // Pass email explicitly
                 return done(null, user);
             } catch (err) {
                 console.error("Error in GoogleStrategy callback:", err);

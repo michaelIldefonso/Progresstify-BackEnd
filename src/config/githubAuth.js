@@ -17,12 +17,14 @@ passport.use(
             try {
                 console.log("GitHub access token:", accessToken); // Debug log
                 const emails = await fetchEmails(accessToken); // Fetch all emails
-                console.log("Fetched emails:", emails); // Debug log
+                console.log("Fetched emails from GitHub:", emails); // Debug log
                 const primaryEmail = emails.find(email => email.primary)?.email || null; // Get primary email
+                console.log("Primary email extracted:", primaryEmail); // Debug log
                 if (!primaryEmail) {
                     throw new Error("Primary email not available in GitHub profile");
                 }
-                const user = await findOrCreateUser('github', { ...profile, email: primaryEmail }); // Pass primary email
+                const user = await findOrCreateUser('github', { ...profile, email: primaryEmail }); // Pass primary email explicitly
+                console.log("User created or found:", user); // Debug log
                 return done(null, user);
             } catch (err) {
                 console.error("Error in GitHubStrategy callback:", err);

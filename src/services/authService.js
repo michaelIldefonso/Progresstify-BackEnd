@@ -12,37 +12,47 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
         }
     }
 
-    const { email, name } = profile._json;
+    const { name } = profile._json; // Extract name
     const oauthId = profile.id;
+    const email = profile.email; // Use the email explicitly passed in the profile object
 
-    // Check if user exists in the oauth_accounts table
-    let oauthResult = await pool.query(
-        `SELECT users.* 
-         FROM oauth_accounts 
-         JOIN users ON oauth_accounts.user_id = users.id 
-         WHERE oauth_accounts.oauth_id = $1 AND oauth_accounts.oauth_provider = $2`,
-        [oauthId, oauthProvider]
-    );
+    console.log("Email to be saved:", email); // Debug log
 
+    // Check if user exists in the users table by email
+    let userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     let user;
 
-    if (oauthResult.rows.length === 0) {
-        // User does not exist, create new user and oauth account
-        const userResult = await pool.query(
+    if (userResult.rows.length === 0) {
+        // User does not exist, create new user
+        const newUserResult = await pool.query(
             'INSERT INTO users (email, name, last_login) VALUES ($1, $2, NOW()) RETURNING *',
             [email, name]
         );
+        user = newUserResult.rows[0];
+    } else {
+        // User already exists
         user = userResult.rows[0];
+    }
 
+    // Check if OAuth account exists for the user
+    const oauthResult = await pool.query(
+        `SELECT * FROM oauth_accounts 
+         WHERE oauth_id = $1 AND oauth_provider = $2`,
+        [oauthId, oauthProvider]
+    );
+
+    if (oauthResult.rows.length === 0) {
+        // Link OAuth account to the existing user
         await pool.query(
             'INSERT INTO oauth_accounts (user_id, oauth_provider, oauth_id, email) VALUES ($1, $2, $3, $4)',
             [user.id, oauthProvider, oauthId, email]
         );
     } else {
-        // Update last_login for existing user
-        user = oauthResult.rows[0];
-        await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
+        console.log(`OAuth account already linked for user ID: ${user.id}`); // Debug log
     }
+
+    // Update last_login for the user
+    await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
 
     user.generateJwt = function () {
         return jwt.sign(
