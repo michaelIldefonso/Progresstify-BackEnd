@@ -2,11 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 
 // Config imports
-const passport = require("./src/config/googleAuth");
-const pool = require("./src/config/db");
+const passport = require("./src/config/googleAuth"); // Google Auth
+const jwt = require("jsonwebtoken"); // Add this line
+const pool = require("./src/config/db"); // Add this line
+require("./src/config/githubAuth"); // GitHub Auth (initialize)
 
 // Middleware imports
 const ensureAuthenticated = require("./src/middleware/authMiddleware");
@@ -18,14 +19,14 @@ const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes");
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 
-// Route imports - AdminApp 
+// Route imports - AdminApp
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
 
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
-const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Import adminAuthRoutes
 const userRoutes = require("./src/routes/userRoutes");
+const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Add this line
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -49,14 +50,14 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/auth/admin", adminAuthRoutes); // Use adminAuthRoutes
 app.use("/users", userRoutes);
+app.use("/auth/admin", adminAuthRoutes); // Add this line
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
-app.use("/api/columns", columnRoutes); // Use column routes
-app.use("/api/cards", cardRoutes); // Use card routes
-app.use("/api/admin", adminRoutes); // Use admin routes
-app.use("/api/admin/dashboard", dashboardRoutes); // Use dashboard routes
+app.use("/api/columns", columnRoutes);
+app.use("/api/cards", cardRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin/dashboard", dashboardRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");

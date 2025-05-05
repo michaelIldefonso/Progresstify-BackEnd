@@ -33,8 +33,9 @@ const getTotalUsers = async () => {
 // Fetch all users
 const getAllUsers = async () => {
     const query = `
-        SELECT users.id, users.email, users.role_id, roles.name AS role_name
-        FROM users
+        SELECT oauth_accounts.oauth_id, oauth_accounts.oauth_provider, users.email, users.role_id, roles.name AS role_name
+        FROM oauth_accounts
+        LEFT JOIN users ON oauth_accounts.user_id = users.id
         LEFT JOIN roles ON users.role_id = roles.id
     `;
     const result = await pool.query(query);
@@ -42,20 +43,25 @@ const getAllUsers = async () => {
 };
 
 // Update user role
-const updateUserRole = async (id, role_id) => {
+const updateUserRole = async (oauth_id, role_id) => {
     const query = `
-        UPDATE users SET role_id = $1 WHERE id = $2 RETURNING id, email, role_id
+        UPDATE users 
+        SET role_id = $1 
+        WHERE id = (SELECT user_id FROM oauth_accounts WHERE oauth_id = $2) 
+        RETURNING id, email, role_id
     `;
-    const result = await pool.query(query, [role_id, id]);
+    const result = await pool.query(query, [role_id, oauth_id]);
     return result.rows[0];
 };
 
 // Delete user
-const deleteUserById = async (id) => {
+const deleteUserById = async (oauth_id) => {
     const query = `
-        DELETE FROM users WHERE id = $1 RETURNING id, email
+        DELETE FROM users 
+        WHERE id = (SELECT user_id FROM oauth_accounts WHERE oauth_id = $1) 
+        RETURNING id, email
     `;
-    const result = await pool.query(query, [id]);
+    const result = await pool.query(query, [oauth_id]);
     return result.rows[0];
 };
 

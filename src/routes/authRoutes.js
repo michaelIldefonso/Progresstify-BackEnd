@@ -1,26 +1,19 @@
 const express = require("express");
-const passport = require("passport");
+const googleAuthController = require("../controllers/googleAuthController");
+const githubAuthController = require("../controllers/githubAuthController");
 const authController = require("../controllers/authController");
 
 const router = express.Router();
 
-// MainApp user login route
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+// Google Authentication
+router.get("/google", googleAuthController.googleLogin);
+router.get("/google/callback", googleAuthController.googleCallback);
 
-router.get(
-    "/google/callback",
-    passport.authenticate("google", { session: false, failureRedirect: "/" }),
-    (req, res) => {
-        try {
-            const token = req.user.generateJwt();
-            res.redirect(`${process.env.CLIENT_URL}/workspace?token=${token}`);
-        } catch (err) {
-            console.error("OAuth Error:", err);
-            res.status(500).json({ error: "Internal Server Error" });
-        }
-    }
-);
+// GitHub Authentication
+router.get("/github", githubAuthController.githubAuth);
+router.get("/github/callback", githubAuthController.githubCallback);
 
+// Logout
 router.get("/logout", authController.logout);
 
 module.exports = router;
