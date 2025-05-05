@@ -5,7 +5,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 // Config imports
-const passport = require("./src/config/auth");
+const passport = require("./src/config/googleAuth");
 const pool = require("./src/config/db");
 
 // Middleware imports
