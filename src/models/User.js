@@ -41,7 +41,32 @@ async function createUser(name, email, oauthProvider = null, oauthId = null) {
     }
 }
 
+// Queries related to updating user data
+async function updateLastLogin(userId) {
+    await pool.query('UPDATE users SET last_login = NOW() WHERE id = $1', [userId]);
+}
+
+// Queries related to OAuth accounts
+async function linkOAuthAccount(userId, oauthProvider, oauthId, email) {
+    await pool.query(
+        'INSERT INTO oauth_accounts (user_id, oauth_provider, oauth_id, email) VALUES ($1, $2, $3, $4)',
+        [userId, oauthProvider, oauthId, email]
+    );
+}
+
+async function getOAuthAccount(oauthId, oauthProvider) {
+    const result = await pool.query(
+        `SELECT * FROM oauth_accounts 
+         WHERE oauth_id = $1 AND oauth_provider = $2`,
+        [oauthId, oauthProvider]
+    );
+    return result.rows[0];
+}
+
 module.exports = { 
     getUserByEmail, 
-    createUser 
+    createUser, 
+    updateLastLogin, 
+    linkOAuthAccount, 
+    getOAuthAccount 
 };
