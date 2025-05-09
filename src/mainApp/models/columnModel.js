@@ -8,7 +8,7 @@ const getColumnsWithCardsByBoardId = async (boardId) => {
     [boardId]
   );
   const cardsResult = await pool.query(
-    `SELECT cards.id, cards.column_id, cards.text, cards.checked, cards.position
+    `SELECT cards.id, cards.column_id, cards.text, cards.checked, cards.position, cards.due_date
      FROM cards
      INNER JOIN columns ON cards.column_id = columns.id
      WHERE columns.board_id = $1
