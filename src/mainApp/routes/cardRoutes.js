@@ -20,4 +20,10 @@ router.patch("/:id/checked", ensureAuthenticated, updateLastActive, cardControll
 // PATCH route to move a card
 router.patch("/:id/move", ensureAuthenticated, updateLastActive, cardController.moveCardHandler);
 
+// Update due date for a card
+router.patch("/:id/due-date", ensureAuthenticated, updateLastActive, cardController.updateCardDueDateHandler);
+
+// Get tasks with upcoming deadlines
+router.get("/upcoming", ensureAuthenticated, updateLastActive, cardController.getUpcomingTasksHandler);
+
 module.exports = router;
