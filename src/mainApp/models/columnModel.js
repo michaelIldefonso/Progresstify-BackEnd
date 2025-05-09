@@ -1,6 +1,8 @@
 const pool = require("../../config/db");
 
 const getColumnsWithCardsByBoardId = async (boardId) => {
+  await deleteEmptyColumnsWithoutCards(boardId); // Ensure empty columns without cards are deleted
+
   const columnsResult = await pool.query(
     'SELECT * FROM columns WHERE board_id = $1 ORDER BY "order"',
     [boardId]
@@ -59,10 +61,22 @@ const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
   }
 };
 
+const deleteEmptyColumnsWithoutCards = async (boardId) => {
+  await pool.query(
+    `DELETE FROM columns
+     WHERE board_id = $1 AND (title IS NULL OR title = '')
+     AND NOT EXISTS (
+       SELECT 1 FROM cards WHERE cards.column_id = columns.id
+     )`,
+    [boardId]
+  );
+};
+
 module.exports = {
   getColumnsWithCardsByBoardId,
   createColumn,
   deleteColumnById,
   renameColumnById,
   updateColumnOrder,
+  deleteEmptyColumnsWithoutCards,
 };
