@@ -1,9 +1,9 @@
 const cardService = require("../services/cardService");
 
 const createCardHandler = async (req, res) => {
-  const { column_id, text, checked, position } = req.body;
+  const { column_id, text, checked, position, dueDate } = req.body;
   try {
-    const card = await cardService.createCard(column_id, text, checked, position);
+    const card = await cardService.createCard(column_id, text, checked, position, dueDate);
     res.status(201).json(card);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -25,9 +25,9 @@ const deleteCardHandler = async (req, res) => {
 
 const updateCardHandler = async (req, res) => {
   const { id } = req.params;
-  const { title, text, checked, position } = req.body;
+  const { title, text, checked, position, dueDate } = req.body;
   try {
-    const card = await cardService.updateCard(id, title, text, checked, position);
+    const card = await cardService.updateCard(id, title, text, checked, position, dueDate);
     if (!card) {
       return res.status(404).json({ message: "Card not found" });
     }
@@ -60,6 +60,10 @@ const moveCardHandler = async (req, res) => {
   const { id } = req.params;
   const { column_id, position } = req.body;
 
+  if (!column_id) {
+    return res.status(400).json({ message: "Column ID is required" });
+  }
+  
   if (typeof position !== "number") {
     return res.status(400).json({ message: "Position must be a number" });
   }
@@ -75,10 +79,50 @@ const moveCardHandler = async (req, res) => {
   }
 };
 
+// Update a card's due date
+const updateCardDueDateHandler = async (req, res) => {
+  const { id } = req.params;
+  const { dueDate } = req.body;
+
+  console.log("Controller - Card ID:", id); // Debugging
+  console.log("Controller - Due Date:", dueDate); // Debugging
+
+  if (!dueDate) {
+    return res.status(400).json({ message: "Due date is required" });
+  }
+
+  try {
+    const updatedCard = await cardService.updateCardDueDate(id, dueDate);
+    console.log("Controller - Updated Card:", updatedCard); // Debugging
+
+    if (!updatedCard) {
+      return res.status(404).json({ message: "Card not found" });
+    }
+    res.status(200).json({ message: "Due date updated successfully", card: updatedCard });
+  } catch (err) {
+    console.error("Error updating due date:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Fetch tasks with upcoming deadlines
+const getUpcomingTasksHandler = async (req, res) => {
+  const { days } = req.query;
+
+  try {
+    const tasks = await cardService.getUpcomingTasks(days || 7);
+    res.status(200).json(tasks);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   createCardHandler,
   deleteCardHandler,
   updateCardHandler,
   toggleCardCheckedHandler,
   moveCardHandler,
+  updateCardDueDateHandler,
+  getUpcomingTasksHandler,
 };
