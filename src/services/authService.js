@@ -1,5 +1,5 @@
 const { getUserByEmail, createUser, updateLastLogin, linkOAuthAccount, getOAuthAccount } = require('../models/User');
-const jwt = require('jsonwebtoken');
+const { generateAccessToken, generateRefreshToken } = require('../utils/tokenUtils');
 
 exports.findOrCreateUser = async (oauthProvider, profile) => {
     if (oauthProvider === 'deserialize') {
@@ -36,17 +36,19 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
     await updateLastLogin(user.id);
 
     user.generateJwt = function () {
-        return jwt.sign(
-            {
+        return {
+            accessToken: generateAccessToken({
                 id: this.id,
                 email: this.email,
                 oauth_id: oauthId,
                 name: this.name,
                 role_id: this.role_id,
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: "5h" }
-        );
+            }),
+            refreshToken: generateRefreshToken({
+                id: this.id,
+                email: this.email,
+            }),
+        };
     };
 
     return user;

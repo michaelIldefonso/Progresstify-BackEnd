@@ -8,9 +8,9 @@ const githubAuthController = {
             if (err || !user) {
                 return res.status(401).json({ message: "Authentication failed" });
             }
-            const token = user.generateJwt();
-            // Redirect to the client with the token
-            res.redirect(`${process.env.CLIENT_URL}/workspace?token=${token}`);
+            const { accessToken, refreshToken } = user.generateJwt();
+            // Redirect to the client with the tokens
+            res.redirect(`${process.env.CLIENT_URL}/workspace?token=${accessToken}&refreshToken=${refreshToken}`);
         })(req, res);
     },
 };

@@ -5,8 +5,8 @@ module.exports = {
     handleGoogleCallback: (req, res) => {
         try {
             console.log("Admin user:", req.user); // Debug log to verify req.user
-            const token = req.user.generateJwt();
-            res.redirect(`${process.env.ADMIN_URL}/home?token=${token}`);
+            const { accessToken, refreshToken } = req.user.generateJwt();
+            res.redirect(`${process.env.ADMIN_URL}/home?token=${accessToken}&refreshToken=${refreshToken}`);
         } catch (err) {
             console.error("OAuth Error:", err);
             res.status(500).json({ error: "Internal Server Error" });

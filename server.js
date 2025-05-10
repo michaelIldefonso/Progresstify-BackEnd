@@ -27,6 +27,7 @@ const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Add this line
+const refreshTokenRoutes = require("./src/routes/refreshTokenRoutes"); // Add this line
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -58,6 +59,7 @@ app.use("/api/columns", columnRoutes);
 app.use("/api/cards", cardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/token", refreshTokenRoutes); // Add this line
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
