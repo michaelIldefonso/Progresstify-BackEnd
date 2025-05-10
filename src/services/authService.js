@@ -40,13 +40,12 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
             accessToken: generateAccessToken({
                 id: this.id,
                 email: this.email,
-                oauth_id: oauthId,
-                name: this.name,
                 role_id: this.role_id,
             }),
             refreshToken: generateRefreshToken({
                 id: this.id,
                 email: this.email,
+                role_id: this.role_id,
             }),
         };
     };

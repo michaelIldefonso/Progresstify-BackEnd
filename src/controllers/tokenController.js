@@ -1,5 +1,4 @@
 const { verifyToken, generateAccessToken } = require("../utils/tokenUtils");
-const { getUserByEmail } = require("../models/User");
 
 exports.refreshAccessToken = async (req, res) => {
     const { refreshToken } = req.body;
@@ -14,18 +13,10 @@ exports.refreshAccessToken = async (req, res) => {
             return res.status(401).json({ message: "Invalid refresh token" });
         }
 
-        // Fetch user details from the database
-        const user = await getUserByEmail(payload.email);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
         const newAccessToken = generateAccessToken({
-            id: user.id,
-            email: user.email,
-            oauth_id: user.oauth_id,
-            name: user.name,
-            role_id: user.role_id,
+            id: payload.id,
+            email: payload.email,
+            role_id: payload.role_id,
         });
         console.log("New access token generated:", newAccessToken);
         res.json({ accessToken: newAccessToken });

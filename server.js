@@ -22,10 +22,10 @@ const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 // Route imports - AdminApp
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
+const dataRoutes = require("./src/adminApp/routes/dataRoutes"); // Add this line
 
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
-const userRoutes = require("./src/routes/userRoutes");
 const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Add this line
 const refreshTokenRoutes = require("./src/routes/refreshTokenRoutes"); // Add this line
 
@@ -51,7 +51,6 @@ app.use(passport.initialize());
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
 app.use("/auth/admin", adminAuthRoutes); // Add this line
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
@@ -59,21 +58,11 @@ app.use("/api/columns", columnRoutes);
 app.use("/api/cards", cardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/data", dataRoutes); // Add this line
 app.use("/token", refreshTokenRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
-});
-
-app.get("/api/data", ensureAuthenticated, updateLastActive, (req, res) => {
-    res.json({
-        message: "This is some data from the API",
-        userId: req.user.id,
-        userEmail: req.user.email,
-        userName: req.user.name,
-        userOauth_id: req.user.oauth_id,
-        userRole: req.user.role_id,
-    });
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
