@@ -59,7 +59,7 @@ app.use("/api/columns", columnRoutes);
 app.use("/api/cards", cardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
-app.use("/token", refreshTokenRoutes); // Add this line
+app.use("/token", refreshTokenRoutes);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");
