@@ -15,6 +15,6 @@ router.post("/", ensureAuthenticated, updateLastActive, workspaceController.crea
 router.delete("/delete/:id", ensureAuthenticated, updateLastActive, workspaceController.deleteWorkspace);
 
 // Rename a workspace
-router.put("/rename/:id", ensureAuthenticated, updateLastActive, workspaceController.renameWorkspace);
+router.put("/rename/:id", ensureAuthenticated, updateLastActive,  workspaceController.renameWorkspace);
 
 module.exports = router;

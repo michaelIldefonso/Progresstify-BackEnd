@@ -6,10 +6,20 @@ const cardController = require("../controllers/cardController"); // Import contr
 const router = express.Router();
 
 // POST route to create a new card
-router.post("/create", ensureAuthenticated, updateLastActive, cardController.createCardHandler);
+router.post(
+  "/:boardId/cards",
+  ensureAuthenticated,
+  updateLastActive,
+  cardController.createCardHandler
+);
 
 // DELETE route to delete a card
-router.delete("/:id", ensureAuthenticated, updateLastActive, cardController.deleteCardHandler);
+router.delete(
+  "/:cardId",
+  ensureAuthenticated,
+  updateLastActive,
+  cardController.deleteCardHandler
+);
 
 // PUT route to update a card
 router.put("/cards/:id", ensureAuthenticated, updateLastActive, cardController.updateCardHandler);

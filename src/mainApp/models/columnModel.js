@@ -72,6 +72,14 @@ const deleteEmptyColumnsWithoutCards = async (boardId) => {
   );
 };
 
+const getBoardsIdByColumnId = async (columnId) => {
+  const result = await pool.query(
+    "SELECT board_id FROM columns WHERE id = $1",
+    [columnId]
+  );
+  return result.rows[0]?.board_id;
+};
+
 module.exports = {
   getColumnsWithCardsByBoardId,
   createColumn,

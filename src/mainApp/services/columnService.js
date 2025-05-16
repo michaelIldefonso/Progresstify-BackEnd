@@ -20,10 +20,15 @@ const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
   return await columnModel.updateColumnOrder(boardId, columnId, newOrder, currentOrder);
 };
 
+const getBoardsIdByColumnId = async (columnId) => {
+  return await columnModel.getBoardsIdByColumnId(columnId);
+};
+
 module.exports = {
   getColumnsWithCards,
   createColumn,
   deleteColumn,
   renameColumn,
   updateColumnOrder,
+  getBoardsIdByColumnId,
 };

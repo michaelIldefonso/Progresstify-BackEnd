@@ -16,9 +16,14 @@ const renameBoard = async (boardId, workspaceId, newName) => {
   return await boardsModel.renameBoardById(boardId, workspaceId, newName);
 };
 
+const getWorkspaceIdByBoardId = async (boardId) => {
+  return await boardsModel.getWorkspaceIdByBoardId(boardId);
+};
+
 module.exports = {
   getBoards,
   createBoard,
   deleteBoard,
   renameBoard,
+  getWorkspaceIdByBoardId,
 };

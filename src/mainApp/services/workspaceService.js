@@ -17,9 +17,14 @@ const renameWorkspace = async (workspaceId, userId, newName) => {
   return await workspaceModel.renameWorkspaceById(workspaceId, userId, newName);
 };
 
+const getUserIdByworkspaceId = async (workspaceId) => {
+  return await workspaceModel.getUserIdByworkspaceId(workspaceId);
+};
+
 module.exports = {
   getWorkspaces,
   createWorkspace,
   deleteWorkspace,
   renameWorkspace,
+  getUserIdByworkspaceId,
 };

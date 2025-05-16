@@ -29,9 +29,16 @@ const renameBoardById = async (boardId, workspaceId, newName) => {
   return result.rows[0];
 };
 
+const getWorkspaceIdByBoardId = async (boardId) => {
+  const result = await pool.query("SELECT workspace_id FROM boards WHERE id = $1", [boardId]);
+  return result.rows[0]?.workspace_id;
+}
+
+
 module.exports = {
   getBoardsByWorkspaceId,
   createBoard,
   deleteBoardById,
   renameBoardById,
+  getWorkspaceIdByBoardId,
 };
