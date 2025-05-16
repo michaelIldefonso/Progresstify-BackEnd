@@ -7,7 +7,7 @@ const router = express.Router();
 
 // POST route to create a new card
 router.post(
-  "/:boardId/cards",
+  "/create",
   ensureAuthenticated,
   updateLastActive,
   cardController.createCardHandler
