@@ -15,7 +15,7 @@ router.post(
 
 // DELETE route to delete a card
 router.delete(
-  "/:cardId",
+  "/:id",
   ensureAuthenticated,
   updateLastActive,
   cardController.deleteCardHandler
