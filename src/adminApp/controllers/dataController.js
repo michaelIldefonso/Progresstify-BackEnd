@@ -12,6 +12,7 @@ const getData = async (req, res) => {
             message: "This is some data from the API",
             userId: user.id,
             userName: user.name,
+            email: user.email,
             userRole: user.role_id,
         });
     } catch (err) {
