@@ -1,4 +1,4 @@
-const { getUserByEmail } = require("../../models/User");
+const { getUserByEmail } = require("../models/User");
 
 // Controller for fetching user data
 const getData = async (req, res) => {
@@ -10,7 +10,7 @@ const getData = async (req, res) => {
 
         res.json({
             message: "This is some data from the API",
-            userId: user.id,
+            userId: user.oauth_id,
             userName: user.name,
             email: user.email,
             userRole: user.role_id,
