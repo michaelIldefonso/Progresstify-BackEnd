@@ -10,7 +10,7 @@ const getData = async (req, res) => {
 
         res.json({
             message: "This is some data from the API",
-            userId: user.oauth_id,
+            oauthId: user.oauth_id,
             userName: user.name,
             email: user.email,
             userRole: user.role_id,
