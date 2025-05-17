@@ -10,7 +10,10 @@ const {
     fetchActiveAccounts,
     fetchNewUsers,
     fetchTotalUsers,
+    fetchDailyMetricsController,
 } = require('../controllers/dashboardController');
+// Route to get daily metrics (charts)
+router.get('/charts/daily-metrics', ensureAuthenticated, checkAdmin, fetchDailyMetricsController);
 
 // Route to get the count of active accounts
 router.get('/charts/active-accounts', ensureAuthenticated, checkAdmin, fetchActiveAccounts);

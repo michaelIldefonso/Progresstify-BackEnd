@@ -22,12 +22,12 @@ const cardRoutes = require("./src/mainApp/routes/cardRoutes");
 // Route imports - AdminApp
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
-const dataRoutes = require("./src/routes/dataRoutes"); // Add this line
 
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
 const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Add this line
 const refreshTokenRoutes = require("./src/routes/refreshTokenRoutes"); // Add this line
+const dataRoutes = require("./src/routes/dataRoutes"); // Add this line
 
 const app = express();
 const PORT = process.env.PORT || 5000;
