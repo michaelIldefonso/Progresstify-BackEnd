@@ -46,7 +46,7 @@ const deleteBoard = async (req, res) => {
     // Get workspaceId from boardId, then verify ownership
     const workspaceId = await boardService.getWorkspaceIdByBoardId(boardId);
     await verifyWorkspaceOwnership(userId, workspaceId);
-    const result = await boardService.deleteBoard(boardId);
+    const result = await boardService.deleteBoard(boardId, workspaceId);
 
     if (result.rowCount === 0) {
       return res.status(404).json({ message: "Board not found or not authorized" });
