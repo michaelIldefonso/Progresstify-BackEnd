@@ -117,6 +117,24 @@ const getUpcomingTasksHandler = async (req, res) => {
   }
 };
 
+const updateCardText = async (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  if (typeof text !== "string" || text.trim() === "") {
+    return res.status(400).json({ error: "Text is required and cannot be empty." });
+  }
+
+  try {
+    const updatedCard = await cardService.updateCardText(id, text);
+    if (!updatedCard) return res.status(404).json({ error: 'Card not found' });
+    res.json({ card: updatedCard });
+  } catch (err) {
+    console.error('Error updating card text:', err);
+    res.status(500).json({ error: 'Failed to update card text' });
+  }
+};
+
 module.exports = {
   createCardHandler,
   deleteCardHandler,
@@ -125,4 +143,5 @@ module.exports = {
   moveCardHandler,
   updateCardDueDateHandler,
   getUpcomingTasksHandler,
+  updateCardText,
 };

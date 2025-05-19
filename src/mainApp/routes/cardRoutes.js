@@ -36,4 +36,6 @@ router.patch("/:id/due-date", ensureAuthenticated, updateLastActive, cardControl
 // Get tasks with upcoming deadlines
 router.get("/upcoming", ensureAuthenticated, updateLastActive, cardController.getUpcomingTasksHandler);
 
+router.patch('/:id/text', ensureAuthenticated, updateLastActive, cardController.updateCardText);
+
 module.exports = router;

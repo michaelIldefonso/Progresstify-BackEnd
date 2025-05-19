@@ -32,6 +32,10 @@ const getUpcomingTasks = async (days) => {
   return await cardModel.getUpcomingTasks(days);
 };
 
+const updateCardText = async (id, text) => {
+  return await cardModel.updateCardText(id, text);
+};
+
 module.exports = {
   createCard,
   deleteCard,
@@ -40,4 +44,5 @@ module.exports = {
   moveCard,
   updateCardDueDate,
   getUpcomingTasks,
+  updateCardText,
 };

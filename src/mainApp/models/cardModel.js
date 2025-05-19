@@ -60,6 +60,14 @@ const moveCard = async (id, columnId, position) => {
   return result.rows[0];
 };
 
+const updateCardText = async (id, text) => {
+  const result = await pool.query(
+    "UPDATE cards SET text = $1 WHERE id = $2 RETURNING *",
+    [text, id]
+  );
+  return result.rows[0];
+};
+
 module.exports = {
   createCard,
   deleteCardById,
@@ -68,4 +76,5 @@ module.exports = {
   moveCard,
   updateCardDueDate,
   getUpcomingTasks,
+  updateCardText,
 };
