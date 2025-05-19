@@ -24,7 +24,7 @@ router.delete(
 );
 
 // PUT route to rename a board
-router.put(
+router.patch(
   "/:workspaceId/boards/:boardId/rename",
   ensureAuthenticated,
   updateLastActive,

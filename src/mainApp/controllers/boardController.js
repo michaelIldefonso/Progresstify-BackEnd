@@ -73,7 +73,7 @@ const renameBoard = async (req, res) => {
     // Get workspaceId from boardId, then verify ownership
     const workspaceId = await boardService.getWorkspaceIdByBoardId(boardId);
     await verifyWorkspaceOwnership(userId, workspaceId);
-    const board = await boardService.renameBoard(boardId, newName);
+    const board = await boardService.renameBoard(boardId, workspaceId, newName);
 
     if (!board) {
       return res.status(404).json({ message: "Board not found or not authorized" });
