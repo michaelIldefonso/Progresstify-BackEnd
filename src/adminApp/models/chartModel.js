@@ -1,5 +1,4 @@
-// src/adminApp/models/chartModel.js
-const db = require('../../config/db'); // adjust path if needed
+const db = require('../../config/db');
 
 // Fetch daily metrics by metric_type and date range
 async function fetchDailyMetrics(metricType, startDate, endDate) {

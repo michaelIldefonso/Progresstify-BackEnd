@@ -18,10 +18,12 @@ const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
 const boardRoutes = require("./src/mainApp/routes/boardRoutes");
 const columnRoutes = require("./src/mainApp/routes/columnRoutes");
 const cardRoutes = require("./src/mainApp/routes/cardRoutes");
+const mainAppMaintenanceRoutes = require("./src/mainApp/routes/maintenanceRoutes");
 
 // Route imports - AdminApp
 const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
+const maintenanceRoutes = require("./src/adminApp/routes/maintenanceRoutes");
 
 // Route imports - General
 const authRoutes = require("./src/routes/authRoutes");
@@ -56,8 +58,10 @@ app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes);
 app.use("/api/cards", cardRoutes);
+app.use("/api/maintenance", mainAppMaintenanceRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
+app.use("/api/admin/maintenance", maintenanceRoutes);
 app.use("/api/data", dataRoutes); // Add this line
 app.use("/token", refreshTokenRoutes);
 
