@@ -31,14 +31,15 @@ const getTotalUsers = async () => {
 };
 
 // Fetch all users
-const getAllUsers = async () => {
+const getAllUsers = async (loggedInUserId) => {
     const query = `
         SELECT oauth_accounts.oauth_id, oauth_accounts.oauth_provider, users.email, users.role_id, roles.name AS role_name
         FROM oauth_accounts
         LEFT JOIN users ON oauth_accounts.user_id = users.id
         LEFT JOIN roles ON users.role_id = roles.id
+        WHERE users.id != $1
     `;
-    const result = await pool.query(query);
+    const result = await pool.query(query, [loggedInUserId]);
     return result.rows;
 };
 

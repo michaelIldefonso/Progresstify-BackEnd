@@ -4,13 +4,13 @@ const router = express.Router();
 
 const maintenanceController = require('../controllers/maintenanceController');
 const ensureAuthenticated = require('../../middleware/authMiddleware');
-const checkAdmin = require('../../middleware/checkAdmin');
+const checkAdminModerator = require('../../middleware/checkAdminModerator');
 
 
 // GET maintenance settings by ID (admin only)
-router.get('/:id', ensureAuthenticated, checkAdmin, maintenanceController.getMaintenanceSettings);
+router.get('/:id', ensureAuthenticated, checkAdminModerator, maintenanceController.getMaintenanceSettings);
 
 // PUT update maintenance settings by ID (admin only)
-router.put('/:id', ensureAuthenticated, checkAdmin, maintenanceController.updateMaintenanceSettings);
+router.put('/:id', ensureAuthenticated, checkAdminModerator, maintenanceController.updateMaintenanceSettings);
 
 module.exports = router;

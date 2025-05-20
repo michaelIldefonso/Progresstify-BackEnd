@@ -1,7 +1,7 @@
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
 const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
-const checkAdmin = require("../../middleware/checkAdmin"); // Import checkAdmin middleware
+const checkAdmin = require("../../middleware/checkOnlyAdmin"); // Import checkAdmin middleware
 const {
     fetchAllUsers,
     modifyUserRole,

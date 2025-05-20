@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("passport");
-const checkAdmin = require("../middleware/checkAdmin");
+const checkAdminModerator = require("../middleware/checkAdminModerator");
 const { handleGoogleCallback, googleLogin } = require("../controllers/adminGoogleAuthController");
 
 const router = express.Router();
@@ -11,7 +11,7 @@ router.get("/google", googleLogin);
 router.get(
     "/google/callback",
     passport.authenticate("google-admin", { session: false, failureRedirect: "/" }),
-    checkAdmin, // Ensure the user is an admin
+    checkAdminModerator, // Ensure the user is an admin
     handleGoogleCallback
 );
 
