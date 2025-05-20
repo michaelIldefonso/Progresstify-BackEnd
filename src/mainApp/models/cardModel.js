@@ -23,11 +23,22 @@ const updateCardDueDate = async (id, dueDate) => {
 };
 
 // Fetch tasks with upcoming deadlines
-const getUpcomingTasks = async (days = 7) => {
+const getUpcomingTasks = async (days) => {
+  // Get today's date in UTC at midnight
+  const today = new Date();
+
+  // Calculate end date
+  const end = new Date(today);
+  end.setDate(end.getDate() + Number(days));
+
+  const todayStr = today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  const endStr = end.toISOString().slice(0, 10);     // 'YYYY-MM-DD'
+
   const result = await pool.query(
-    "SELECT * FROM cards WHERE due_date BETWEEN NOW() AND NOW() + INTERVAL $1 || ' days'",
-    [days]
+    `SELECT * FROM cards WHERE due_date::date >= $1::date AND due_date::date < $2::date ORDER BY due_date ASC`,
+    [todayStr, endStr]
   );
+
   return result.rows;
 };
 
@@ -67,6 +78,7 @@ const updateCardText = async (id, text) => {
   );
   return result.rows[0];
 };
+
 
 module.exports = {
   createCard,

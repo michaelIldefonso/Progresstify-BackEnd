@@ -1,4 +1,5 @@
 const cardService = require("../services/cardService");
+const { sendDueDateEmail } = require("../../utils/emailServices");
 
 const createCardHandler = async (req, res) => {
   const { column_id, text, checked, position, dueDate } = req.body;
@@ -134,6 +135,8 @@ const updateCardText = async (req, res) => {
     res.status(500).json({ error: 'Failed to update card text' });
   }
 };
+
+
 
 module.exports = {
   createCardHandler,

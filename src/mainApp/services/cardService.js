@@ -1,4 +1,5 @@
 const cardModel = require("../models/cardModel");
+const { getUserById } = require("../../models/User");
 
 const createCard = async (columnId, text, checked, position, dueDate) => {
   return await cardModel.createCard(columnId, text, checked, position, dueDate);
@@ -36,6 +37,7 @@ const updateCardText = async (id, text) => {
   return await cardModel.updateCardText(id, text);
 };
 
+
 module.exports = {
   createCard,
   deleteCard,
@@ -45,4 +47,5 @@ module.exports = {
   updateCardDueDate,
   getUpcomingTasks,
   updateCardText,
+
 };

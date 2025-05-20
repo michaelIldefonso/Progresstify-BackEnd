@@ -38,4 +38,6 @@ router.get("/upcoming", ensureAuthenticated, updateLastActive, cardController.ge
 
 router.patch('/:id/text', ensureAuthenticated, updateLastActive, cardController.updateCardText);
 
+
+
 module.exports = router;
