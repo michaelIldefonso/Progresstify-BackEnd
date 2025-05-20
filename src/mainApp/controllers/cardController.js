@@ -108,9 +108,10 @@ const updateCardDueDateHandler = async (req, res) => {
 // Fetch tasks with upcoming deadlines
 const getUpcomingTasksHandler = async (req, res) => {
   const { days } = req.query;
+  const userId = req.user?.id;
 
   try {
-    const tasks = await cardService.getUpcomingTasks(days || 7);
+    const tasks = await cardService.getUpcomingTasks(userId, days || 7);
     res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -28,8 +28,8 @@ const updateCardDueDate = async (id, dueDate) => {
 };
 
 // Fetch tasks with upcoming deadlines
-const getUpcomingTasks = async (days) => {
-  return await cardModel.getUpcomingTasks(days);
+const getUpcomingTasks = async (userId, days) => {
+  return await cardModel.getUpcomingTasks(userId, days);
 };
 
 const updateCardText = async (id, text) => {
