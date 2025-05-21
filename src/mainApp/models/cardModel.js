@@ -36,15 +36,17 @@ const getUpcomingTasks = async (userId, days = 7) => {
 
   const result = await pool.query(
     `SELECT 
-  columns.title,
-  cards.text, 
-  cards.due_date
-FROM cards
-JOIN columns ON cards.column_id = columns.id
-JOIN boards ON columns.board_id = boards.id
-JOIN workspaces ON boards.workspace_id = workspaces.id
-JOIN users ON workspaces.owner_id = users.id
-WHERE users.id = $1 AND due_date::date >= $2::date AND due_date::date < $3::date ORDER BY due_date ASC`,
+      workspaces.name AS workspace_name,
+      boards.name AS board_name,
+      columns.title,
+      cards.text, 
+      cards.due_date
+      FROM cards
+      JOIN columns ON cards.column_id = columns.id
+      JOIN boards ON columns.board_id = boards.id
+      JOIN workspaces ON boards.workspace_id = workspaces.id
+      JOIN users ON workspaces.owner_id = users.id
+      WHERE users.id = $1 AND due_date::date >= $2::date AND due_date::date < $3::date ORDER BY due_date ASC`,
     [userId, todayStr, endStr]
   );
   return result.rows;
