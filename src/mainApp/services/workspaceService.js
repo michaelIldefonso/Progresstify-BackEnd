@@ -5,7 +5,7 @@ const getWorkspaces = async (userId) => {
 };
 
 const createWorkspace = async (name, userId, description) => {
-  console.log("Service layer received:", { name, userId, description }); // Debug log
+ 
   return await workspaceModel.createWorkspace(name, userId, description);
 };
 

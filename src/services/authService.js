@@ -16,8 +16,7 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
     const oauthId = profile.id;
     const email = profile.email; // Use the email explicitly passed in the profile object
 
-    console.log("Email to be saved:", email); // Debug log
-
+   
     // Check if user exists or create a new one
     let user = await getUserByEmail(email);
     if (!user) {
@@ -29,7 +28,7 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
     if (!oauthAccount) {
         await linkOAuthAccount(user.id, oauthProvider, oauthId, email);
     } else {
-        console.log(`OAuth account already linked for user ID: ${user.id}`); // Debug log
+        
     }
 
     // Update last_login for the user

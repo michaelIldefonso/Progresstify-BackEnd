@@ -7,7 +7,7 @@ const updateLastActive = async (req, res, next) => {
         "UPDATE users SET last_active = NOW() WHERE id = $1",
         [req.user.id]
       );
-      console.log(`Updated last_active for user ID: ${req.user.id}`);
+    
     } catch (err) {
       console.error("Failed to update last_active:", err.message);
     }

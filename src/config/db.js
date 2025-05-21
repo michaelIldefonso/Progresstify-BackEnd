@@ -6,6 +6,6 @@ const pool = new Pool({
 });
 
 // Log connection only once
-console.log("Database connection pool initialized");
+
 
 module.exports = pool;

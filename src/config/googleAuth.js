@@ -14,7 +14,7 @@ passport.use(
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null; // Extract email
-                console.log("Google primary email:", email); // Debug log
+               
                 if (!email) {
                     throw new Error("Email not available in Google profile");
                 }
@@ -39,7 +39,7 @@ passport.use(
         async (accessToken, refreshToken, profile, done) => {
             try {
                 const email = profile.emails && profile.emails[0] ? profile.emails[0].value : null; // Extract email
-                console.log("Google Admin primary email:", email); // Debug log
+                
                 if (!email) {
                     throw new Error("Email not available in Google profile");
                 }

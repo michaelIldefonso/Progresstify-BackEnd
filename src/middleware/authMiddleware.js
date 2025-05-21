@@ -14,7 +14,7 @@ function ensureAuthenticated(req, res, next) {
     }
 
     const user = verifyToken(token, process.env.JWT_SECRET);
-    console.log("Decoded user from token:", user); // Debugging log
+
 
     if (!user) {
         console.error("Token verification failed or invalid token");
@@ -22,7 +22,7 @@ function ensureAuthenticated(req, res, next) {
     }
 
     req.user = user;
-    console.log(`[${req.method}] ${req.originalUrl} - Authenticated user:`, req.user);
+   
     next();
 }
 

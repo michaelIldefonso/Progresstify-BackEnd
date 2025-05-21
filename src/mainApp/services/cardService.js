@@ -22,8 +22,7 @@ const moveCard = async (id, columnId, position) => {
 
 // Update a card's due date
 const updateCardDueDate = async (id, dueDate) => {
-  console.log("Service - Card ID:", id); // Debugging
-  console.log("Service - Due Date:", dueDate); // Debugging
+ 
   return await cardModel.updateCardDueDate(id, dueDate);
 };
 

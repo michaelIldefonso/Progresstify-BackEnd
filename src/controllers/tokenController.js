@@ -18,7 +18,7 @@ exports.refreshAccessToken = async (req, res) => {
             email: payload.email,
             role_id: payload.role_id,
         });
-        console.log("New access token generated:", newAccessToken);
+       
         res.json({ accessToken: newAccessToken });
     } catch (err) {
         console.error("Error refreshing token:", err.message);

@@ -84,8 +84,6 @@ const updateCardDueDateHandler = async (req, res) => {
   const { id } = req.params;
   const { dueDate } = req.body;
 
-  console.log("Controller - Card ID:", id); // Debugging
-  console.log("Controller - Due Date:", dueDate); // Debugging
 
   if (!dueDate) {
     return res.status(400).json({ message: "Due date is required" });
@@ -93,7 +91,7 @@ const updateCardDueDateHandler = async (req, res) => {
 
   try {
     const updatedCard = await cardService.updateCardDueDate(id, dueDate);
-    console.log("Controller - Updated Card:", updatedCard); // Debugging
+
 
     if (!updatedCard) {
       return res.status(404).json({ message: "Card not found" });
