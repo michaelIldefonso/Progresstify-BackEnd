@@ -9,10 +9,6 @@ const jwt = require("jsonwebtoken"); // Add this line
 const pool = require("./src/config/db"); // Add this line
 require("./src/config/githubAuth"); // GitHub Auth (initialize)
 
-// Middleware imports
-const ensureAuthenticated = require("./src/middleware/authMiddleware");
-const updateLastActive = require("./src/middleware/updateLastActiveMiddleware");
-
 // Route imports - MainApp
 const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
 const boardRoutes = require("./src/mainApp/routes/boardRoutes");
