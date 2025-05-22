@@ -5,46 +5,36 @@ const columnController = require("../controllers/columnController"); // Import c
 
 const router = express.Router({ mergeParams: true });
 
-router.use(updateLastActive);
+// Apply ensureAuthenticated middleware to all routes
+router.use(ensureAuthenticated);
 
-// Get columns and their associated cards in a board
+// Route handlers
 router.get(
   "/:boardId/columns-with-cards",
-  ensureAuthenticated,
-  updateLastActive,
   columnController.getColumnsWithCards
 );
 
-// Create a new column
 router.post(
   "/:boardId/columns",
-  ensureAuthenticated,
-  updateLastActive,
   columnController.createColumnHandler
 );
 
-// Delete a column
 router.delete(
   "/:boardId/columns/:columnId",
-  ensureAuthenticated,
-  updateLastActive,
   columnController.deleteColumnHandler
 );
 
-// Rename a column
 router.put(
   "/:boardId/columns/:columnId",
-  ensureAuthenticated,
-  updateLastActive,
   columnController.renameColumnHandler
 );
 
-// Update column order
 router.put(
   "/:boardId/columns/:columnId/order",
-  ensureAuthenticated,
-  updateLastActive,
   columnController.updateColumnOrderHandler
 );
+
+// Apply updateLastActive middleware at the end
+router.use(updateLastActive);
 
 module.exports = router;

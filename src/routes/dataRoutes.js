@@ -5,6 +5,6 @@ const ensureAuthenticated = require("../middleware/authMiddleware");
 const updateLastActive = require("../middleware/updateLastActiveMiddleware");
 
 // Route for fetching user data
-router.get("/", ensureAuthenticated, updateLastActive, getData);
+router.get("/", ensureAuthenticated, getData, updateLastActive);
 
 module.exports = router;

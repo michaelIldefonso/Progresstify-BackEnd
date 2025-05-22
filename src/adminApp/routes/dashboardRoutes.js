@@ -12,16 +12,14 @@ const {
     fetchTotalUsers,
     fetchDailyMetricsController,
 } = require('../controllers/dashboardController');
-// Route to get daily metrics (charts)
-router.get('/charts/daily-metrics', ensureAuthenticated, checkAdminModerator, fetchDailyMetricsController);
 
-// Route to get the count of active accounts
-router.get('/charts/active-accounts', ensureAuthenticated, checkAdminModerator, fetchActiveAccounts);
+// Apply common middlewares to all routes
+router.use(ensureAuthenticated, checkAdminModerator);
 
-// Route to get the count of new users
-router.get('/charts/new-users', ensureAuthenticated, checkAdminModerator, fetchNewUsers);
-
-// Route to get the total number of users
-router.get('/charts/total-users', ensureAuthenticated, checkAdminModerator, fetchTotalUsers);
+// Route handlers
+router.get('/charts/daily-metrics', fetchDailyMetricsController);
+router.get('/charts/active-accounts', fetchActiveAccounts);
+router.get('/charts/new-users', fetchNewUsers);
+router.get('/charts/total-users', fetchTotalUsers);
 
 module.exports = router;

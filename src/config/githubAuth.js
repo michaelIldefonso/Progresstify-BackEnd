@@ -8,6 +8,7 @@ passport.use(
     "github",
     new GitHubStrategy(
         {
+            // Use environment variables
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
             callbackURL: process.env.GITHUB_CALLBACK_URL,
@@ -15,11 +16,11 @@ passport.use(
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-               
+                // Check if the profile has emails
                 const emails = await fetchEmails(accessToken); // Fetch all emails
-               
+                
                 const primaryEmail = emails.find(email => email.primary)?.email || null; // Get primary email
-               
+                
                 if (!primaryEmail) {
                     throw new Error("Primary email not available in GitHub profile");
                 }
@@ -34,6 +35,7 @@ passport.use(
     )
 );
 
+// Currently unused, but can be used for admin authentication in the future
 passport.use(
     "github-admin",
     new GitHubStrategy(

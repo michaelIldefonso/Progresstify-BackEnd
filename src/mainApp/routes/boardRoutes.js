@@ -5,38 +5,31 @@ const boardController = require("../controllers/boardController"); // Import con
 
 const router = express.Router({ mergeParams: true });
 
-router.use(updateLastActive);
+// Apply ensureAuthenticated middleware to all routes
+router.use(ensureAuthenticated);
 
-// POST route to create a new board
+// Route handlers
 router.post(
   "/:workspaceId/boards",
-  ensureAuthenticated,
-  updateLastActive,
   boardController.createBoardHandler
 );
 
-// DELETE route to delete a board
 router.delete(
   "/:workspaceId/boards/:boardId",
-  ensureAuthenticated,
-  updateLastActive,
   boardController.deleteBoard
 );
 
-// PUT route to rename a board
 router.patch(
   "/:workspaceId/boards/:boardId/rename",
-  ensureAuthenticated,
-  updateLastActive,
   boardController.renameBoard
 );
 
-// GET route to fetch boards
 router.get(
   "/:workspaceId/boards",
-  ensureAuthenticated,
-  updateLastActive,
   boardController.getBoards
 );
+
+// Apply updateLastActive middleware at the end
+router.use(updateLastActive);
 
 module.exports = router;

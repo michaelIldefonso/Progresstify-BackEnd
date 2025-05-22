@@ -10,13 +10,12 @@ const {
 
 const router = express.Router();
 
-// Fetch all users
-router.get("/users", ensureAuthenticated, updateLastActive, checkAdmin, fetchAllUsers);
+// Apply common middlewares to all routes
+router.use(ensureAuthenticated, updateLastActive);
 
-// Modify user roles
-router.put("/users/:id/role", ensureAuthenticated, checkAdmin, modifyUserRole);
-
-// Delete a user
-router.delete("/users/:id", ensureAuthenticated, checkAdmin, removeUser);
+// Route handlers
+router.get("/users", checkAdmin, fetchAllUsers);
+router.put("/users/:id/role", checkAdmin, modifyUserRole);
+router.delete("/users/:id", checkAdmin, removeUser);
 
 module.exports = router;

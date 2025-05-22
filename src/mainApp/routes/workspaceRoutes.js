@@ -5,16 +5,30 @@ const workspaceController = require("../controllers/workspaceController"); // Im
 
 const router = express.Router();
 
+router.use(ensureAuthenticated);
+
 // Get workspaces for a user
-router.get("/", ensureAuthenticated, updateLastActive, workspaceController.getWorkspaces);
+router.get(
+    "/",
+    workspaceController.getWorkspaces);
 
 // Create a new workspace
-router.post("/", ensureAuthenticated, updateLastActive, workspaceController.createWorkspace);
+router.post(
+    "/", 
+    workspaceController.createWorkspace);
 
 // Delete a workspace
-router.delete("/delete/:id", ensureAuthenticated, updateLastActive, workspaceController.deleteWorkspace);
+router.delete(
+    "/delete/:id", 
+    workspaceController.deleteWorkspace);
 
 // Rename a workspace
-router.put("/rename/:id", ensureAuthenticated, updateLastActive,  workspaceController.renameWorkspace);
+router.put(
+    "/rename/:id",  
+    workspaceController.renameWorkspace);
+    
+
+router.use(updateLastActive);
+
 
 module.exports = router;
