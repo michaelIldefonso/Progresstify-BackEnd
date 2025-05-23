@@ -1,6 +1,7 @@
-// Board routes for handling board-related endpoints in a workspace.
+// Board routes for handling board-related endpoints within a workspace.
 // Applies authentication and last-active update middleware to all routes.
 // Imports controller methods for board CRUD operations.
+
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
