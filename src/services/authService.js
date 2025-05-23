@@ -1,5 +1,5 @@
 // Import necessary functions and utilities from other modules
-const { getUserByEmail, createUser, updateLastLogin, linkOAuthAccount, getOAuthAccount } = require('../models/User');
+const { getUserByEmail, createUser, updateLastLogin, linkOAuthAccount, getOAuthAccount, getUserById } = require('../models/User');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokenUtils');
 
 // Function to find or create a user based on OAuth provider and profile information
@@ -7,7 +7,7 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
     // Handle deserialization case for user retrieval
     if (oauthProvider === 'deserialize') {
         const { id } = profile; // Extract user ID from profile
-        const user = await getUserByEmail(id); // Fetch user by email (ID in this case)
+        const user = await getUserById(id); // Fetch user by ID
         if (user) {
             return user; // Return user if found
         } else {

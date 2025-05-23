@@ -1,11 +1,11 @@
 // Importing the getUserById function from the User model
-const { getUserById } = require("../models/User");
+const { getUserById, getUserByEmail } = require("../models/User");
 
 // Controller for fetching user data
 const getData = async (req, res) => {
     try {
         // Fetching the user by ID from the request object using optional chaining
-        const user = await getUserById(req.user?.id);
+        const user = await getUserByEmail(req.user?.email);
 
         // If the user is not found, return a 404 response
         if (!user) {

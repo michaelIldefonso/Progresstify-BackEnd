@@ -1,13 +1,13 @@
 const pool = require('../config/db');
 
 // Function to fetch user details by email, including OAuth account details if available
-async function getUserByEmail(id) {
+async function getUserByEmail(email) {
     const result = await pool.query(
         `SELECT users.*, oauth_accounts.oauth_provider, oauth_accounts.oauth_id 
          FROM users 
          LEFT JOIN oauth_accounts ON users.id = oauth_accounts.user_id 
-         WHERE users.id = $1`, 
-        [id]
+         WHERE users.email = $1`, 
+        [email]
     ); // Fetch user and OAuth details
     return result.rows[0]; // Return the first row of the result
 }
@@ -73,6 +73,18 @@ async function getOAuthAccount(oauthId, oauthProvider) {
     return result.rows[0]; // Return the first row of the result
 }
 
+// Function to fetch user details by ID, including OAuth account details if available
+async function getUserById(id) {
+    const result = await pool.query(
+        `SELECT users.*, oauth_accounts.oauth_provider, oauth_accounts.oauth_id 
+         FROM users 
+         LEFT JOIN oauth_accounts ON users.id = oauth_accounts.user_id 
+         WHERE users.id = $1`,
+        [id]
+    ); // Fetch user and OAuth details by ID
+    return result.rows[0]; // Return the first row of the result
+}
+
 // Exporting all user-related functions for use in other parts of the application
 module.exports = { 
     getUserByEmail, 
@@ -80,5 +92,6 @@ module.exports = {
     updateLastLogin, 
     linkOAuthAccount, 
     getOAuthAccount, 
-    updateLastActiveQuery 
+    updateLastActiveQuery,
+    getUserById // Export the new function
 };
