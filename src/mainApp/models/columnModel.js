@@ -7,7 +7,7 @@ const getColumnsWithCardsByBoardId = async (boardId) => {
   await deleteEmptyColumnsWithoutCards(boardId); // Ensure empty columns without cards are deleted
 
   const columnsResult = await pool.query(
-    'SELECT * FROM columns WHERE board_id = $1 ORDER BY "order"',
+    'SELECT * FROM columns WHERE board_id = $1 ORDER BY position',
     [boardId]
   );
   const cardsResult = await pool.query(
@@ -29,10 +29,10 @@ const getColumnsWithCardsByBoardId = async (boardId) => {
 };
 
 // Create a new column in a board
-const createColumn = async (boardId, title, order) => {
+const createColumn = async (boardId, title, position) => {
   const result = await pool.query(
-    'INSERT INTO columns (board_id, title, "order", created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
-    [boardId, title, order]
+    'INSERT INTO columns (board_id, title, position, created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
+    [boardId, title, position]
   );
   return result.rows[0];
 };
@@ -51,19 +51,19 @@ const renameColumnById = async (columnId, title) => {
   return result.rows[0];
 };
 
-// Update the order of a column within a board
-const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
-  await pool.query('UPDATE columns SET "order" = $1 WHERE id = $2', [newOrder, columnId]);
+// Update the position of a column within a board
+const updateColumnPosition = async (boardId, columnId, newPosition, currentPosition) => {
+  await pool.query('UPDATE columns SET position = $1 WHERE id = $2', [newPosition, columnId]);
 
-  if (newOrder > currentOrder) {
+  if (newPosition > currentPosition) {
     await pool.query(
-      'UPDATE columns SET "order" = "order" - 1 WHERE board_id = $1 AND "order" > $2 AND "order" <= $3 AND id != $4',
-      [boardId, currentOrder, newOrder, columnId]
+      'UPDATE columns SET position = position - 1 WHERE board_id = $1 AND position > $2 AND position <= $3 AND id != $4',
+      [boardId, currentPosition, newPosition, columnId]
     );
-  } else if (newOrder < currentOrder) {
+  } else if (newPosition < currentPosition) {
     await pool.query(
-      'UPDATE columns SET "order" = "order" + 1 WHERE board_id = $1 AND "order" >= $2 AND "order" < $3 AND id != $4',
-      [boardId, newOrder, currentOrder, columnId]
+      'UPDATE columns SET position = position + 1 WHERE board_id = $1 AND position >= $2 AND position < $3 AND id != $4',
+      [boardId, newPosition, currentPosition, columnId]
     );
   }
 };
@@ -95,6 +95,6 @@ module.exports = {
   createColumn,
   deleteColumnById,
   renameColumnById,
-  updateColumnOrder,
+  updateColumnPosition,
   deleteEmptyColumnsWithoutCards,
 };

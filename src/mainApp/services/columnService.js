@@ -6,8 +6,8 @@ const getColumnsWithCards = async (boardId) => {
   return await columnModel.getColumnsWithCardsByBoardId(boardId);
 };
 
-const createColumn = async (boardId, title, order) => {
-  return await columnModel.createColumn(boardId, title, order);
+const createColumn = async (boardId, title, position) => {
+  return await columnModel.createColumn(boardId, title, position);
 };
 
 const deleteColumn = async (columnId) => {
@@ -18,12 +18,16 @@ const renameColumn = async (columnId, title) => {
   return await columnModel.renameColumnById(columnId, title);
 };
 
-const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
-  return await columnModel.updateColumnOrder(boardId, columnId, newOrder, currentOrder);
+const updateColumnPosition = async (boardId, columnId, newPosition, currentPosition) => {
+  return await columnModel.updateColumnPosition(boardId, columnId, newPosition, currentPosition);
 };
 
 const getBoardsIdByColumnId = async (columnId) => {
   return await columnModel.getBoardsIdByColumnId(columnId);
+};
+
+const getColumnPosition = async (columnId) => {
+  return await columnModel.getColumnPosition(columnId);
 };
 
 module.exports = {
@@ -31,6 +35,7 @@ module.exports = {
   createColumn,
   deleteColumn,
   renameColumn,
-  updateColumnOrder,
+  updateColumnPosition,
   getBoardsIdByColumnId,
+  getColumnPosition,
 };

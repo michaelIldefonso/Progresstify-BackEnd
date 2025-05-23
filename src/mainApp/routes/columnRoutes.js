@@ -1,6 +1,6 @@
 // Column routes for handling column-related endpoints within a board.
 // Applies authentication and last-active update middleware to all routes.
-// Imports controller methods for column CRUD and order operations.
+// Imports controller methods for column CRUD and position operations.
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
@@ -34,8 +34,8 @@ router.put(
 );
 
 router.put(
-  "/:boardId/columns/:columnId/order",
-  columnController.updateColumnOrderHandler
+  "/:boardId/columns/:columnId/position",
+  columnController.updateColumnPositionHandler
 );
 
 // Apply updateLastActive middleware at the end

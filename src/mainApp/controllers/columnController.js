@@ -1,4 +1,4 @@
-// Controller for column-related operations (CRUD, order, etc.)
+// Controller for column-related operations (CRUD, position, etc.)
 const columnService = require("../services/columnService");
 const boardService = require("../services/boardService");
 const workspaceService = require("../services/workspaceService");
@@ -31,11 +31,11 @@ const getColumnsWithCards = async (req, res) => {
 // Create a new column in a board, only if the user owns the board
 const createColumnHandler = async (req, res) => {
   const { boardId } = req.params;
-  const { title, order } = req.body;
+  const { title, position } = req.body;
   const userId = req.user?.id;
   try {
     await verifyUserOwnsBoard(userId, boardId);
-    const column = await columnService.createColumn(boardId, title, order);
+    const column = await columnService.createColumn(boardId, title, position);
     res.status(201).json(column);
   } catch (err) {
     if (err.message === "You are not authorized to access this board") {
@@ -84,18 +84,18 @@ const renameColumnHandler = async (req, res) => {
   }
 };
 
-// Update the order of a column in a board, only if the user owns the board
-const updateColumnOrderHandler = async (req, res) => {
+// Update the position of a column in a board, only if the user owns the board
+const updateColumnPositionHandler = async (req, res) => {
   const { boardId, columnId } = req.params;
-  const { newOrder } = req.body;
+  const { newPosition } = req.body;
   const userId = req.user?.id;
   try {
     await verifyUserOwnsBoard(userId, boardId);
-    const currentOrderResult = await columnService.getColumnOrder(columnId);
-    const currentOrder = currentOrderResult.order;
+    const currentPositionResult = await columnService.getColumnPosition(columnId);
+    const currentPosition = currentPositionResult.position;
 
-    await columnService.updateColumnOrder(boardId, columnId, newOrder, currentOrder);
-    res.status(200).json({ message: "Column order updated successfully" });
+    await columnService.updateColumnPosition(boardId, columnId, newPosition, currentPosition);
+    res.status(200).json({ message: "Column position updated successfully" });
   } catch (err) {
     if (err.message === "You are not authorized to access this board") {
       return res.status(403).json({ error: "Forbidden: You do not have access to this board." });
@@ -110,5 +110,5 @@ module.exports = {
   createColumnHandler,
   deleteColumnHandler,
   renameColumnHandler,
-  updateColumnOrderHandler,
+  updateColumnPositionHandler,
 };
