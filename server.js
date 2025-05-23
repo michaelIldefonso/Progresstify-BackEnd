@@ -2,12 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
+const passport = require("passport");
 
 // Config imports
-const passport = require("./src/config/googleAuth"); // Google Auth
-const jwt = require("jsonwebtoken"); // Add this line
-const pool = require("./src/config/db"); // Add this line
-require("./src/config/githubAuth"); // GitHub Auth (initialize)
+require("./src/config/googleAuth"); // Initializes Google authentication strategy
+require("./src/config/githubAuth"); // Initializes GitHub authentication strategy
 
 // Route imports - MainApp
 const workspaceRoutes = require("./src/mainApp/routes/workspaceRoutes");
@@ -21,11 +20,14 @@ const adminRoutes = require("./src/adminApp/routes/userManagement");
 const dashboardRoutes = require("./src/adminApp/routes/dashboardRoutes");
 const maintenanceRoutes = require("./src/adminApp/routes/maintenanceRoutes");
 
-// Route imports - General
+// Route imports - Authentication and tokens
 const authRoutes = require("./src/routes/authRoutes");
-const adminAuthRoutes = require("./src/routes/adminAuthRoutes"); // Add this line
-const refreshTokenRoutes = require("./src/routes/refreshTokenRoutes"); // Add this line
-const dataRoutes = require("./src/routes/dataRoutes"); // Add this line
+const adminAuthRoutes = require("./src/routes/adminAuthRoutes");
+const refreshTokenRoutes = require("./src/routes/refreshTokenRoutes"); 
+
+// Route imports - Data
+// This route is used to fetch data from the database for the frontend
+const dataRoutes = require("./src/routes/dataRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -47,19 +49,29 @@ app.use(
 
 app.use(passport.initialize());
 
-// Routes
+// Auth Routes
 app.use("/auth", authRoutes);
-app.use("/auth/admin", adminAuthRoutes); // Add this line
+app.use("/auth/admin", adminAuthRoutes);
+app.use("/token", refreshTokenRoutes);
+
+
+// mainApp Routes
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/boards", boardRoutes);
 app.use("/api/columns", columnRoutes);
 app.use("/api/cards", cardRoutes);
+
+//mainApp Maintenance Routes
 app.use("/api/maintenance", mainAppMaintenanceRoutes);
+
+// adminApp Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/dashboard", dashboardRoutes);
 app.use("/api/admin/maintenance", maintenanceRoutes);
-app.use("/api/data", dataRoutes); // Add this line
-app.use("/token", refreshTokenRoutes);
+
+// data Route
+app.use("/api/data", dataRoutes);
+
 
 app.get("/", (req, res) => {
     res.send("Welcome to the API");

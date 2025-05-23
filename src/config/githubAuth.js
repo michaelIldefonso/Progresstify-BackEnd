@@ -35,19 +35,25 @@ passport.use(
     )
 );
 
-
-passport.serializeUser((user, done) => {
+// Serialize user information into session or token
+const githubSerializeUser = (user, done) => {
     done(null, user.id);
-});
+};
 
-passport.deserializeUser(async (id, done) => {
+// Deserialize user information from session or token
+const githubDeserializeUser = async (id, done) => {
     try {
         const user = await findOrCreateUser('deserialize', { id });
         done(null, user);
     } catch (err) {
-        console.error("Error in deserializeUser:", err);
+        console.error("Error in GitHub deserializeUser:", err);
         done(err, null);
     }
-});
+};
 
+// Register serialize and deserialize functions with Passport.js
+passport.serializeUser(githubSerializeUser);
+passport.deserializeUser(githubDeserializeUser);
+
+// Export configured Passport.js instance
 module.exports = passport;

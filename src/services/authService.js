@@ -1,39 +1,43 @@
+// Import necessary functions and utilities from other modules
 const { getUserByEmail, createUser, updateLastLogin, linkOAuthAccount, getOAuthAccount } = require('../models/User');
 const { generateAccessToken, generateRefreshToken } = require('../utils/tokenUtils');
 
+// Function to find or create a user based on OAuth provider and profile information
 exports.findOrCreateUser = async (oauthProvider, profile) => {
+    // Handle deserialization case for user retrieval
     if (oauthProvider === 'deserialize') {
-        const { id } = profile;
-        const user = await getUserByEmail(id);
+        const { id } = profile; // Extract user ID from profile
+        const user = await getUserByEmail(id); // Fetch user by email (ID in this case)
         if (user) {
-            return user;
+            return user; // Return user if found
         } else {
-            throw new Error('User not found');
+            throw new Error('User not found'); // Throw error if user does not exist
         }
     }
 
-    const { name } = profile._json; // Extract name
-    const oauthId = profile.id;
-    const email = profile.email; // Use the email explicitly passed in the profile object
+    // Extract necessary information from the profile object
+    const { name } = profile._json; // Extract name from profile JSON
+    const oauthId = profile.id; // Extract OAuth ID
+    const email = profile.email; // Extract email from profile
 
-   
     // Check if user exists or create a new one
-    let user = await getUserByEmail(email);
+    let user = await getUserByEmail(email); // Fetch user by email
     if (!user) {
-        user = await createUser(name, email, oauthProvider, oauthId);
+        user = await createUser(name, email, oauthProvider, oauthId); // Create a new user if not found
     }
 
     // Check if OAuth account exists for the user
     const oauthAccount = await getOAuthAccount(oauthId, oauthProvider);
     if (!oauthAccount) {
-        await linkOAuthAccount(user.id, oauthProvider, oauthId, email);
+        await linkOAuthAccount(user.id, oauthProvider, oauthId, email); // Link OAuth account if not already linked
     } else {
-        
+        // OAuth account already exists, no action needed
     }
 
-    // Update last_login for the user
+    // Update last login timestamp for the user
     await updateLastLogin(user.id);
 
+    // Add a method to generate JWT tokens for the user
     user.generateJwt = function () {
         return {
             accessToken: generateAccessToken({
@@ -49,5 +53,5 @@ exports.findOrCreateUser = async (oauthProvider, profile) => {
         };
     };
 
-    return user;
+    return user; // Return the user object
 };

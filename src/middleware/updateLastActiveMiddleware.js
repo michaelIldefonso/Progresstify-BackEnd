@@ -1,21 +1,22 @@
-const pool = require("../config/db");
+const { updateLastActiveQuery } = require('../models/User');
 
 const updateLastActive = async (req, res, next) => {
 
-  if (req.user && req.user.id) {
+  // Check if the user is authenticated and has a valid ID
+  if (req.user?.id) {
     try {
-      await pool.query(
-        "UPDATE users SET last_active = NOW() WHERE id = $1",
-        [req.user.id]
-      );
+      await updateLastActiveQuery(req.user.id); // Update the last active timestamp in the database
     } catch (err) {
+      // Log the error if the update fails
       console.error("Failed to update last_active:", err.message);
     }
   } else {
+    // Log a warning if req.user is not set
     console.warn("req.user is not set. Ensure ensureAuthenticated middleware is working correctly.");
   }
 
   next();
 };
 
+// Export the updateLastActive Middleware function
 module.exports = updateLastActive;
