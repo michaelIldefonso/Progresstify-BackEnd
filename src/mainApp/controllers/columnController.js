@@ -1,10 +1,9 @@
+// Controller for column-related operations (CRUD, order, etc.)
 const columnService = require("../services/columnService");
 const boardService = require("../services/boardService");
 const workspaceService = require("../services/workspaceService");
 
-
-
-// Reusable verification function (throws on failure)
+// Reusable verification function to check if the user owns the board (throws on failure)
 async function verifyUserOwnsBoard(userId, boardId) {
   const workspaceId = await boardService.getWorkspaceIdByBoardId(boardId);
   const ownerId = await workspaceService.getUserIdByworkspaceId(workspaceId);
@@ -13,6 +12,7 @@ async function verifyUserOwnsBoard(userId, boardId) {
   }
 }
 
+// Get all columns (with cards) for a board, only if the user owns the board
 const getColumnsWithCards = async (req, res) => {
   const { boardId } = req.params;
   const userId = req.user?.id;
@@ -28,8 +28,7 @@ const getColumnsWithCards = async (req, res) => {
   }
 };
 
-
-
+// Create a new column in a board, only if the user owns the board
 const createColumnHandler = async (req, res) => {
   const { boardId } = req.params;
   const { title, order } = req.body;
@@ -46,8 +45,7 @@ const createColumnHandler = async (req, res) => {
   }
 };
 
-
-
+// Delete a column by columnId, only if the user owns the board
 const deleteColumnHandler = async (req, res) => {
   const { columnId, boardId } = req.params;
   const userId = req.user?.id;
@@ -66,8 +64,7 @@ const deleteColumnHandler = async (req, res) => {
   }
 };
 
-
-
+// Rename a column by columnId, only if the user owns the board
 const renameColumnHandler = async (req, res) => {
   const { columnId, boardId } = req.params;
   const { title } = req.body;
@@ -87,8 +84,7 @@ const renameColumnHandler = async (req, res) => {
   }
 };
 
-
-
+// Update the order of a column in a board, only if the user owns the board
 const updateColumnOrderHandler = async (req, res) => {
   const { boardId, columnId } = req.params;
   const { newOrder } = req.body;
@@ -108,6 +104,7 @@ const updateColumnOrderHandler = async (req, res) => {
   }
 };
 
+// Export all column controller handlers
 module.exports = {
   getColumnsWithCards,
   createColumnHandler,

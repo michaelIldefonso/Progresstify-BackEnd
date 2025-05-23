@@ -2,11 +2,7 @@ const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
 const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
 const checkAdmin = require("../../middleware/checkOnlyAdmin"); // Import checkAdmin middleware
-const {
-    fetchAllUsers,
-    modifyUserRole,
-    removeUser,
-} = require("../controllers/userController");
+const userController = require("../controllers/userController");
 
 const router = express.Router();
 
@@ -14,8 +10,8 @@ const router = express.Router();
 router.use(ensureAuthenticated, updateLastActive);
 
 // Route handlers
-router.get("/users", checkAdmin, fetchAllUsers);
-router.put("/users/:id/role", checkAdmin, modifyUserRole);
-router.delete("/users/:id", checkAdmin, removeUser);
+router.get("/users", checkAdmin, userController.fetchAllUsers);
+router.put("/users/:id/role", checkAdmin, userController.modifyUserRole);
+router.delete("/users/:id", checkAdmin, userController.removeUser);
 
 module.exports = router;

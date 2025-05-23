@@ -1,3 +1,5 @@
+// Service functions for workspace operations. These are mostly wrappers for workspaceModel methods, intended for future business logic or validation.
+
 const workspaceModel = require("../models/workspaceModel");
 
 const getWorkspaces = async (userId) => {

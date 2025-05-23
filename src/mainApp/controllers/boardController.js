@@ -1,8 +1,9 @@
+// Controller for board-related operations in a workspace
 const boardService = require("../services/boardService");
 const workspaceService = require("../services/workspaceService");
 
-
 // Reusable verification function using req.user.id
+// Checks if the user is the owner of the workspace
 async function verifyWorkspaceOwnership(userId, workspaceId) {
   const ownerId = await workspaceService.getUserIdByworkspaceId(workspaceId);
   if (!userId || ownerId !== userId) {
@@ -10,7 +11,7 @@ async function verifyWorkspaceOwnership(userId, workspaceId) {
   }
 }
 
-
+// Get all boards for a given workspace, only if the user owns the workspace
 const getBoards = async (req, res) => {
   const { workspaceId } = req.params;
   const userId = req.user?.id;
@@ -23,7 +24,7 @@ const getBoards = async (req, res) => {
   }
 };
 
-
+// Create a new board in a workspace, only if the user owns the workspace
 const createBoardHandler = async (req, res) => {
   const { name } = req.body;
   const { workspaceId } = req.params;
@@ -37,8 +38,7 @@ const createBoardHandler = async (req, res) => {
   }
 };
 
-
-
+// Delete a board by boardId, only if the user owns the workspace containing the board
 const deleteBoard = async (req, res) => {
   const { boardId } = req.params;
   const userId = req.user?.id;
@@ -58,8 +58,7 @@ const deleteBoard = async (req, res) => {
   }
 };
 
-
-
+// Rename a board by boardId, only if the user owns the workspace containing the board
 const renameBoard = async (req, res) => {
   const { boardId } = req.params;
   const { newName } = req.body;
@@ -85,6 +84,7 @@ const renameBoard = async (req, res) => {
   }
 };
 
+// Export controller functions for use in routes
 module.exports = {
   getBoards,
   createBoardHandler,

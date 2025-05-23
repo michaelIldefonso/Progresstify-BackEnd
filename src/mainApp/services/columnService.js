@@ -1,3 +1,5 @@
+// Service functions for column operations. These currently wrap columnModel methods and are prepared for future logic or validation.
+
 const columnModel = require("../models/columnModel");
 
 const getColumnsWithCards = async (boardId) => {

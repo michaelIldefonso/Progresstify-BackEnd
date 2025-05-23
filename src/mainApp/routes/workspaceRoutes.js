@@ -1,3 +1,7 @@
+// Workspace routes for handling workspace-related endpoints.
+// Applies authentication and last-active update middleware to all routes.
+// Imports controller methods for workspace CRUD operations.
+
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
 const updateLastActive = require("../../middleware/updateLastActiveMiddleware");

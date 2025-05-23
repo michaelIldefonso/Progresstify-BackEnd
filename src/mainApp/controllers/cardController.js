@@ -1,5 +1,7 @@
+// Controller for card-related operations (CRUD, move, check, due date, etc.)
 const cardService = require("../services/cardService");
 
+// Create a new card in a column
 const createCardHandler = async (req, res) => {
   const { column_id, text, checked, position, dueDate } = req.body;
   try {
@@ -10,6 +12,7 @@ const createCardHandler = async (req, res) => {
   }
 };
 
+// Delete a card by its ID
 const deleteCardHandler = async (req, res) => {
   const { id } = req.params;
   try {
@@ -23,6 +26,7 @@ const deleteCardHandler = async (req, res) => {
   }
 };
 
+// Update card details (title, text, checked, position, due date)
 const updateCardHandler = async (req, res) => {
   const { id } = req.params;
   const { title, text, checked, position, dueDate } = req.body;
@@ -37,6 +41,7 @@ const updateCardHandler = async (req, res) => {
   }
 };
 
+// Toggle the checked status of a card (checkbox functionality)
 const toggleCardCheckedHandler = async (req, res) => {
   const { id } = req.params;
   const { checked } = req.body;
@@ -56,6 +61,7 @@ const toggleCardCheckedHandler = async (req, res) => {
   }
 };
 
+// Move a card to a different column or position
 const moveCardHandler = async (req, res) => {
   const { id } = req.params;
   const { column_id, position } = req.body;
@@ -84,15 +90,12 @@ const updateCardDueDateHandler = async (req, res) => {
   const { id } = req.params;
   const { dueDate } = req.body;
 
-
   if (!dueDate) {
     return res.status(400).json({ message: "Due date is required" });
   }
 
   try {
     const updatedCard = await cardService.updateCardDueDate(id, dueDate);
-
-
     if (!updatedCard) {
       return res.status(404).json({ message: "Card not found" });
     }
@@ -103,7 +106,7 @@ const updateCardDueDateHandler = async (req, res) => {
   }
 };
 
-// Fetch tasks with upcoming deadlines
+// Fetch tasks (cards) with upcoming deadlines for a user
 const getUpcomingTasksHandler = async (req, res) => {
   const { days } = req.query;
   const userId = req.user?.id;
@@ -116,6 +119,7 @@ const getUpcomingTasksHandler = async (req, res) => {
   }
 };
 
+// Update only the text of a card
 const updateCardText = async (req, res) => {
   const { id } = req.params;
   const { text } = req.body;
@@ -134,6 +138,7 @@ const updateCardText = async (req, res) => {
   }
 };
 
+// Export all card controller handlers
 module.exports = {
   createCardHandler,
   deleteCardHandler,

@@ -1,4 +1,5 @@
-const db = require('../../config/db'); // Adjust the path to your db connection
+const db = require('../../config/db'); // import the database connection
+
 // Update maintenance settings by id
 const updateMaintenanceSettingsById = async (id, { is_enabled, message, estimated_end }) => {
   const query = `
@@ -12,7 +13,7 @@ const updateMaintenanceSettingsById = async (id, { is_enabled, message, estimate
   return rows[0];
 };
 
-
+// Get maintenance settings by id
 const getMaintenanceSettingsById = async (id) => {
   const query = `
     SELECT is_enabled, message, estimated_end
@@ -24,6 +25,7 @@ const getMaintenanceSettingsById = async (id) => {
   return rows[0];
 };
 
+// Export the model functions for use in controllers and routes
 module.exports = {
   getMaintenanceSettingsById,
   updateMaintenanceSettingsById,

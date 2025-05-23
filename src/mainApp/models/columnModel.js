@@ -1,5 +1,8 @@
+// Model for interacting with the 'columns' table in the database
+// Provides CRUD operations and utility functions for columns and their cards
 const pool = require("../../config/db");
 
+// Get all columns (with their cards) for a specific board
 const getColumnsWithCardsByBoardId = async (boardId) => {
   await deleteEmptyColumnsWithoutCards(boardId); // Ensure empty columns without cards are deleted
 
@@ -25,6 +28,7 @@ const getColumnsWithCardsByBoardId = async (boardId) => {
   }));
 };
 
+// Create a new column in a board
 const createColumn = async (boardId, title, order) => {
   const result = await pool.query(
     'INSERT INTO columns (board_id, title, "order", created_at) VALUES ($1, $2, $3, NOW()) RETURNING *',
@@ -33,10 +37,12 @@ const createColumn = async (boardId, title, order) => {
   return result.rows[0];
 };
 
+// Delete a column by its ID
 const deleteColumnById = async (columnId) => {
   await pool.query("DELETE FROM columns WHERE id = $1", [columnId]);
 };
 
+// Rename a column by its ID
 const renameColumnById = async (columnId, title) => {
   const result = await pool.query(
     "UPDATE columns SET title = $1 WHERE id = $2 RETURNING *",
@@ -45,6 +51,7 @@ const renameColumnById = async (columnId, title) => {
   return result.rows[0];
 };
 
+// Update the order of a column within a board
 const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
   await pool.query('UPDATE columns SET "order" = $1 WHERE id = $2', [newOrder, columnId]);
 
@@ -61,6 +68,7 @@ const updateColumnOrder = async (boardId, columnId, newOrder, currentOrder) => {
   }
 };
 
+// Delete empty columns (with no title and no cards) from a board
 const deleteEmptyColumnsWithoutCards = async (boardId) => {
   await pool.query(
     `DELETE FROM columns
@@ -72,6 +80,7 @@ const deleteEmptyColumnsWithoutCards = async (boardId) => {
   );
 };
 
+// Get the board ID for a given column ID
 const getBoardsIdByColumnId = async (columnId) => {
   const result = await pool.query(
     "SELECT board_id FROM columns WHERE id = $1",
@@ -80,6 +89,7 @@ const getBoardsIdByColumnId = async (columnId) => {
   return result.rows[0]?.board_id;
 };
 
+// Export all column-related functions
 module.exports = {
   getColumnsWithCardsByBoardId,
   createColumn,

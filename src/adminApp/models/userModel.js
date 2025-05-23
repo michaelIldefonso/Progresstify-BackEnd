@@ -1,6 +1,9 @@
+// Import the database connection pool
 const pool = require('../../config/db');
 
 // Queries specific to adminApp
+
+// Get the count of users active in the last 7 days
 const getActiveAccounts = async () => {
     const query = `
         SELECT COUNT(*) AS active_accounts 
@@ -11,6 +14,7 @@ const getActiveAccounts = async () => {
     return result.rows[0].active_accounts;
 };
 
+// Get the count of users created in the last 30 days
 const getNewUsers = async () => {
     const query = `
         SELECT COUNT(*) AS new_users 
@@ -21,6 +25,7 @@ const getNewUsers = async () => {
     return result.rows[0].new_users;
 };
 
+// Get the total number of users
 const getTotalUsers = async () => {
     const query = `
         SELECT COUNT(*) AS total_users 
@@ -30,7 +35,7 @@ const getTotalUsers = async () => {
     return result.rows[0].total_users;
 };
 
-// Fetch all users
+// Fetch all users except the currently logged-in user
 const getAllUsers = async (loggedInUserId) => {
     const query = `
         SELECT oauth_accounts.oauth_id, oauth_accounts.oauth_provider, users.email, users.role_id, roles.name AS role_name
@@ -43,7 +48,7 @@ const getAllUsers = async (loggedInUserId) => {
     return result.rows;
 };
 
-// Update user role
+// Update a user's role by their OAuth ID
 const updateUserRole = async (oauth_id, role_id) => {
     const query = `
         UPDATE users 
@@ -55,7 +60,7 @@ const updateUserRole = async (oauth_id, role_id) => {
     return result.rows[0];
 };
 
-// Delete user
+// Delete a user by their OAuth ID
 const deleteUserById = async (oauth_id) => {
     const query = `
         DELETE FROM users 
@@ -66,6 +71,7 @@ const deleteUserById = async (oauth_id) => {
     return result.rows[0];
 };
 
+// Export all user-related functions
 module.exports = {
     getActiveAccounts,
     getNewUsers,

@@ -1,3 +1,4 @@
+// Controller for workspace-related operations (CRUD, rename, etc.)
 const {
   getWorkspacesByUserId,
   createWorkspace,
@@ -5,6 +6,7 @@ const {
   renameWorkspaceById,
 } = require("../models/workspaceModel");
 
+// Get all workspaces for the authenticated user
 const getWorkspaces = async (req, res) => {
   try {
     const workspaces = await getWorkspacesByUserId(req.user.id);
@@ -14,6 +16,7 @@ const getWorkspaces = async (req, res) => {
   }
 };
 
+// Create a new workspace for the authenticated user
 const createWorkspaceHandler = async (req, res) => {
   const { name, description } = req.body; // Extract description
   try {
@@ -24,6 +27,7 @@ const createWorkspaceHandler = async (req, res) => {
   }
 };
 
+// Delete a workspace by its ID, only if the user owns it
 const deleteWorkspace = async (req, res) => {
   const { id } = req.params;
   try {
@@ -39,6 +43,7 @@ const deleteWorkspace = async (req, res) => {
   }
 };
 
+// Rename a workspace by its ID, only if the user owns it
 const renameWorkspace = async (req, res) => {
   const { id } = req.params;
   const { newName } = req.body;
@@ -60,6 +65,7 @@ const renameWorkspace = async (req, res) => {
   }
 };
 
+// Export all workspace controller handlers
 module.exports = {
   getWorkspaces,
   createWorkspace: createWorkspaceHandler,

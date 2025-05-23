@@ -1,3 +1,5 @@
+// Service functions for board operations. These are mostly wrappers around the boardsModel methods and are prepared for future expansion or business logic.
+
 const boardsModel = require("../models/boardsModel");
 
 const getBoards = async (workspaceId) => {

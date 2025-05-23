@@ -1,3 +1,5 @@
+// Service functions for card operations. These are primarily wrappers for cardModel methods, set up for future business logic or validation.
+
 const cardModel = require("../models/cardModel");
 
 const createCard = async (columnId, text, checked, position, dueDate) => {

@@ -1,5 +1,8 @@
+// Model for interacting with the 'cards' table in the database
+// Provides CRUD operations and utility functions for cards
 const pool = require("../../config/db");
 
+// Create a new card in a column
 const createCard = async (columnId, text, checked, position, dueDate = null) => {
   const result = await pool.query(
     "INSERT INTO cards (column_id, text, checked, position, due_date) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -22,7 +25,7 @@ const updateCardDueDate = async (id, dueDate) => {
   }
 };
 
-// Fetch tasks with upcoming deadlines
+// Fetch tasks with upcoming deadlines for a user
 const getUpcomingTasks = async (userId, days = 7) => {
   // Get today's date in UTC at midnight
   const today = new Date();
@@ -52,11 +55,13 @@ const getUpcomingTasks = async (userId, days = 7) => {
   return result.rows;
 };
 
+// Delete a card by its ID
 const deleteCardById = async (id) => {
   const result = await pool.query("DELETE FROM cards WHERE id = $1 RETURNING *", [id]);
   return result;
 };
 
+// Update all card fields
 const updateCard = async (id, title, text, checked, position, dueDate) => {
   const result = await pool.query(
     "UPDATE cards SET title = $1, text = $2, checked = $3, position = $4, due_date = $5 WHERE id = $6 RETURNING *",
@@ -65,6 +70,7 @@ const updateCard = async (id, title, text, checked, position, dueDate) => {
   return result.rows[0];
 };
 
+// Toggle the checked status of a card
 const toggleCardChecked = async (id, checked) => {
   const result = await pool.query(
     "UPDATE cards SET checked = $1 WHERE id = $2 RETURNING *",
@@ -73,6 +79,7 @@ const toggleCardChecked = async (id, checked) => {
   return result.rows[0];
 };
 
+// Move a card to a different column and/or position
 const moveCard = async (id, columnId, position) => {
   const result = await pool.query(
     "UPDATE cards SET column_id = $1, position = $2 WHERE id = $3 RETURNING *",
@@ -81,6 +88,7 @@ const moveCard = async (id, columnId, position) => {
   return result.rows[0];
 };
 
+// Update the text of a card
 const updateCardText = async (id, text) => {
   const result = await pool.query(
     "UPDATE cards SET text = $1 WHERE id = $2 RETURNING *",
@@ -89,6 +97,7 @@ const updateCardText = async (id, text) => {
   return result.rows[0];
 };
 
+// Export all card-related functions
 module.exports = {
   createCard,
   deleteCardById,

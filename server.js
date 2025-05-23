@@ -1,8 +1,8 @@
-require("dotenv").config();
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
-const passport = require("passport");
+require("dotenv").config(); // import dotenv to load environment variables
+const express = require("express"); // import express for creating the server
+const path = require("path"); // import path for handling file paths
+const cors = require("cors"); // import cors for handling cross-origin requests
+const passport = require("passport"); // import passport for authentication
 
 // Config imports
 require("./src/config/googleAuth"); // Initializes Google authentication strategy
