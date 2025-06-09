@@ -4,17 +4,31 @@
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
-const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const { updateLastActiveNonBlocking } = require("../../middleware/updateLastActiveMiddleware");
 const workspaceController = require("../controllers/workspaceController"); // Import controller
 
 const router = express.Router();
 
+// Timing middleware to log request duration
+router.use((req, res, next) => {
+  req._startTime = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - req._startTime;
+    console.log(`[WorkspaceRoutes] ${req.method} ${req.originalUrl} took ${duration}ms`);
+  });
+  next();
+});
+
 router.use(ensureAuthenticated);
+router.use(updateLastActiveNonBlocking);
 
 // Get workspaces for a user
 router.get(
     "/",
-    workspaceController.getWorkspaces);
+    (req, res, next) => { console.log('GET /api/workspaces handler start'); next(); },
+    workspaceController.getWorkspaces,
+    (req, res, next) => { console.log('GET /api/workspaces handler end'); next(); }
+);
 
 // Create a new workspace
 router.post(
@@ -23,16 +37,12 @@ router.post(
 
 // Delete a workspace
 router.delete(
-    "/delete/:id", 
+    "/:id", 
     workspaceController.deleteWorkspace);
 
 // Rename a workspace
 router.put(
-    "/rename/:id",  
+    "/:id/rename",  
     workspaceController.renameWorkspace);
-    
-
-router.use(updateLastActive);
-
 
 module.exports = router;

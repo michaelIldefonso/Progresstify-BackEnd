@@ -4,13 +4,14 @@
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
-const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const { updateLastActiveNonBlocking } = require("../../middleware/updateLastActiveMiddleware");
 const columnController = require("../controllers/columnController"); // Import controller
 
 const router = express.Router({ mergeParams: true });
 
 // Apply ensureAuthenticated middleware to all routes
 router.use(ensureAuthenticated);
+router.use(updateLastActiveNonBlocking);
 
 // Route handlers
 router.get(
@@ -38,7 +39,6 @@ router.put(
   columnController.updateColumnPositionHandler
 );
 
-// Apply updateLastActive middleware at the end
-router.use(updateLastActive);
+// Remove the old blocking updateLastActive middleware at the end
 
 module.exports = router;

@@ -18,5 +18,15 @@ const updateLastActive = async (req, res, next) => {
   next();
 };
 
+// Non-blocking updateLastActive middleware
+const updateLastActiveNonBlocking = (req, res, next) => {
+  if (req.user?.id) {
+    updateLastActiveQuery(req.user.id).catch((err) => {
+      console.error("Failed to update last_active (non-blocking):", err.message);
+    });
+  }
+  next();
+};
+
 // Export the updateLastActive Middleware function
-module.exports = updateLastActive;
+module.exports = { updateLastActive, updateLastActiveNonBlocking };

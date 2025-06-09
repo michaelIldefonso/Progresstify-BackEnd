@@ -4,12 +4,13 @@
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
-const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const { updateLastActiveNonBlocking } = require("../../middleware/updateLastActiveMiddleware");
 const cardController = require("../controllers/cardController"); // Import controller
 
 const router = express.Router();
 
 router.use(ensureAuthenticated);
+router.use(updateLastActiveNonBlocking);
 
 // POST route to create a new card
 router.post(
@@ -57,7 +58,5 @@ router.patch(
   "/:id/text",
   cardController.updateCardText
 );
-
-router.use(updateLastActive);
 
 module.exports = router;

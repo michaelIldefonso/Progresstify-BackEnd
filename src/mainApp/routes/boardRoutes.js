@@ -5,13 +5,24 @@
 
 const express = require("express");
 const ensureAuthenticated = require("../../middleware/authMiddleware");
-const updateLastActive = require("../../middleware/updateLastActiveMiddleware");
+const { updateLastActiveNonBlocking } = require("../../middleware/updateLastActiveMiddleware");
 const boardController = require("../controllers/boardController"); // Import controller
 
 const router = express.Router({ mergeParams: true });
 
-// Apply ensureAuthenticated middleware to all routes
+// Timing middleware to log request duration
+router.use((req, res, next) => {
+  req._startTime = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - req._startTime;
+    console.log(`[BoardRoutes] ${req.method} ${req.originalUrl} took ${duration}ms`);
+  });
+  next();
+});
+
+// Apply ensureAuthenticated and updateLastActive middleware to all routes
 router.use(ensureAuthenticated);
+router.use(updateLastActiveNonBlocking);
 
 // Route handlers
 router.post(
@@ -33,8 +44,5 @@ router.get(
   "/:workspaceId/boards",
   boardController.getBoards
 );
-
-// Apply updateLastActive middleware at the end
-router.use(updateLastActive);
 
 module.exports = router;

@@ -8,11 +8,18 @@ const {
 
 // Get all workspaces for the authenticated user
 const getWorkspaces = async (req, res) => {
+  console.time('getWorkspaces-total');
   try {
+    console.time('getWorkspaces-db');
     const workspaces = await getWorkspacesByUserId(req.user.id);
+    console.timeEnd('getWorkspaces-db');
+    console.log('About to send workspaces response');
     res.json(workspaces);
+    console.log('Workspaces response sent');
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    console.timeEnd('getWorkspaces-total');
   }
 };
 
